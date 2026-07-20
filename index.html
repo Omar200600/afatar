@@ -1,165 +1,386 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Axis - تجربة تحريك المجسمات</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>3D Axis - College High Clearance Unified Doors</title>
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    
     <style>
-        body {
+        body, html {
             margin: 0;
             padding: 0;
+            height: 100%;
             overflow: hidden;
-            background-color: #1a1a1a;
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+            background-color: #000;
         }
-        #canvas-container {
-            width: 100vw;
-            height: 100vh;
-        }
-        /* لوحة التحكم بالأزرار */
-        .controls-panel {
+
+        /* ----------------------------------------------------------------- */
+        /* 📱 واجهة المستخدم والأزرار الثابتة لضمان الظهور الدائم             */
+        /* ----------------------------------------------------------------- */
+        .interface-layer {
             position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .interactive {
+            pointer-events: auto;
+        }
+
+        #welcome-overlay {
+            position: absolute;
+            top: 12%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(24, 24, 27, 0.85);
+            color: white;
+            padding: 12px 25px;
+            text-align: center;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+            max-width: 85%;
+        }
+
+        #welcome-overlay h1 { font-size: 1.3rem; margin: 0 0 5px 0; }
+        #welcome-overlay p { font-size: 0.85rem; margin: 0; color: #e4e4e7; }
+
+        .control-panel {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.94);
+            border-radius: 20px;
+            padding: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            background-color: #f4f4f5;
+            border: 1px solid #e4e4e7;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.3rem;
+            color: #27272a;
+            cursor: pointer;
+            transition: background-color 0.1s, transform 0.05s;
+            width: 48px;
+            height: 48px;
+        }
+
+        .btn:active {
+            background-color: #38bdf8;
+            color: white;
+            transform: scale(0.95);
+        }
+
+        #movement-panel {
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            display: flex;
-            gap: 10px;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            z-index: 10;
+            flex-direction: column;
+            align-items: center;
         }
-        .btn {
-            background: #00bcd4;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: background 0.3s;
+
+        .row { display: flex; gap: 8px; }
+        #altitude-panel { left: 15px; bottom: 30px; flex-direction: column; }
+        #rotation-panel { right: 15px; bottom: 30px; flex-direction: column; }
+
+        /* لوحة التحكم الخاصة بالافتار */
+        #avatar-control-panel {
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(15, 23, 42, 0.9);
+            border: 1px solid #38bdf8;
         }
-        .btn:hover {
-            background: #008ba3;
+        #avatar-control-panel .btn {
+            background-color: #1e293b;
+            color: #38bdf8;
+            border: 1px solid #334155;
+            font-size: 0.9rem;
+            width: auto;
+            padding: 0 15px;
+            height: 40px;
         }
+        #avatar-control-panel .btn:active {
+            background-color: #38bdf8;
+            color: #0f172a;
+        }
+
+        .top-btn { position: absolute; top: 15px; background-color: white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        #btn-save { left: 15px; }
+        #btn-settings { right: 15px; }
+        .blue-arrow { color: #0284c7; font-weight: bold; }
     </style>
-    <!-- استدعاء مكتبة Three.js ومستعرض المجسمات وأدوات التحكم -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
-    <!-- مكتبة fflate الضرورية لقراءة ملفات fbx المحملة أحياناً -->
-    <script src="https://cdn.jsdelivr.net/npm/fflate@0.7.4/umd/index.min.js"></script>
 </head>
 <body>
 
-    <div id="canvas-container"></div>
+    <a-scene embedded vr-mode-ui="enabled: false">
+        
+        <!-- الأصول المستدعاة: الكود المضيء الممتاز مع الافتار المرفق -->
+        <a-assets>
+            <a-asset-item id="avatar-model" src="data:model/gltf-binary;base64,gQAAAEdMVEZCAgAAAAAB...[Your complete exact binary string from source 2 goes here]..."></a-asset-item>
+        </a-assets>
+        
+        <!-- إضاءة مريحة وممتازة للمكان تمنع حدوث أي غرف مظلمة -->
+        <a-light type="ambient" color="#ffffff" intensity="1.4"></a-light>
+        <a-light type="directional" color="#ffffff" intensity="0.8" position="5 15 5"></a-light>
+        <a-light type="point" color="#fff" intensity="0.6" position="0 2.5 5"></a-light>
 
-    <!-- أزرار التحكم بالحركات المتضمنة في المجسم -->
-    <div class="controls-panel">
-        <button class="btn" onclick="playAnimation(0)">الحركة 1</button>
-        <button class="btn" onclick="playAnimation(1)">الحركة 2</button>
-        <button class="btn" onclick="stopAllAnimations()">إيقاف الحركة</button>
+        <!-- الكاميرا والـ Rig -->
+        <a-entity id="camera-rig" position="0 0.2 14">
+            <a-entity id="main-camera" camera look-controls="magicWindowTrackingEnabled: true; touchEnabled: true">
+                <a-ellipse position="0 0 -1" radius-x="0.008" radius-y="0.008" color="#ef4444"></a-ellipse>
+            </a-entity>
+        </a-entity>
+
+        <!-- الافتار ثلاثي الأبعاد المساعد المضاف إلى البيئة الكلية -->
+        <a-entity id="ai-avatar" 
+                  gltf-model="#avatar-model" 
+                  position="0 0 11" 
+                  rotation="0 180 0" 
+                  scale="2 2 2">
+        </a-entity>
+
+        <!-- الأرضية والجدران والتقسيمات الخاصة بالكلية -->
+        <a-plane position="0 0 0" rotation="-90 0 0" width="40" height="40" 
+                 material="shader: flat; color: #fdfdfc; src: url(data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'><rect width='120' height='120' fill='%23faf9f5'/><path d='M10 20 Q 30 15 50 40 T 90 80 T 120 100' fill='none' stroke='%23e4e1d9' stroke-width='1.2' opacity='0.6'/><path d='M0 90 Q 20 70 40 95 T 80 60 T 110 10' fill='none' stroke='%23dedacf' stroke-width='0.8' opacity='0.5'/><line x1='0' y1='0' x2='120' y2='0' stroke='%23e6e3da' stroke-width='1.5'/><line x1='0' y1='0' x2='0' y2='120' stroke='%23e6e3da' stroke-width='1.5'/></svg>); repeat: 35 35;">
+        </a-plane>
+        
+        <a-plane color="#e0f7fa" rotation="90 0 0" position="0 3 13.5" width="26" height="7" material="shader: flat;"></a-plane>
+        <a-plane color="#fff8e1" rotation="90 0 0" position="0 3 0" width="5" height="20" material="shader: flat;"></a-plane>
+
+        <a-box id="college-outer-wall-back" position="0 1.5 -17" width="26" height="3" depth="0.1" color="#fcfbfa" material="shader: flat;"></a-box>
+        <a-box id="college-outer-wall-front" position="0 1.5 17" width="26" height="3" depth="0.1" color="#fcfbfa" material="shader: flat;"></a-box>
+        <a-box id="college-outer-wall-left" position="-13 1.5 0" width="0.1" height="3" depth="34" color="#fcfbfa" material="shader: flat;"></a-box>
+        <a-box id="college-outer-wall-right" position="13 1.5 0" width="0.1" height="3" depth="34" color="#fcfbfa" material="shader: flat;"></a-box>
+
+        <a-box id="lobby-wall-left" position="-7.75 1.5 11" width="10.5" height="3" depth="0.1" color="#fef08a" material="shader: flat;"></a-box>
+        <a-box id="lobby-wall-right" position="7.75 1.5 11" width="10.5" height="3" depth="0.1" color="#fef08a" material="shader: flat;"></a-box>
+
+        <a-box position="-2.5 1.5 10.5" width="0.1" height="3" depth="1.0" material="shader: flat; color: #e8f5e9; src: url(data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='200' viewBox='0 0 100 200'><rect width='100' height='200' fill='%23e8f5e9'/><path d='M15 0 Q 35 50 20 100 T 75 160 T 35 200' fill='none' stroke='%23c8e6c9' stroke-width='1.5'/><path d='M85 15 Q 55 75 75 125 T 15 185' fill='none' stroke='%23a5d6a7' stroke-width='0.8' opacity='0.7'/></svg>); repeat: 1 2;"></a-box>
+        <a-box position="-2.5 1.5 7.875" width="0.1" height="3" depth="2.25" material="shader: flat; color: #e8f5e9; src: url(data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='200' viewBox='0 0 100 200'><rect width='100' height='200' fill='%23e8f5e9'/><path d='M15 0 Q 35 50 20 100 T 75 160 T 35 200' fill='none' stroke='%23c8e6c9' stroke-width='1.5'/><path d='M85 15 Q 55 75 75 125 T 15 185' fill='none' stroke='%23a5d6a7' stroke-width='0.8' opacity='0.7'/></svg>); repeat: 1 2;"></a-box>
+        <a-box position="-2.5 1.5 3.625" width="0.1" height="3" depth="2.25" material="shader: flat; color: #e8f5e9; src: url(data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='200' viewBox='0 0 100 200'><rect width='100' height='200' fill='%23e8f5e9'/><path d='M15 0 Q 35 50 20 100 T 75 160 T 35 200' fill='none' stroke='%23c8e6c9' stroke-width='1.5'/><path d='M85 15 Q 55 75 75 125 T 15 185' fill='none' stroke='%23a5d6a7' stroke-width='0.8' opacity='0.7'/></svg>); repeat: 1 2;"></a-box>
+        
+        <a-box position="-2.5 1.5 -1.0" width="0.1" height="3" depth="5.0" material="shader: flat; color: #e8f5e9; src: url(data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='200' viewBox='0 0 100 200'><rect width='100' height='200' fill='%23e8f5e9'/><path d='M15 0 Q 35 50 20 100 T 75 160 T 35 200' fill='none' stroke='%23c8e6c9' stroke-width='1.5'/><path d='M85 15 Q 55 75 75 125 T 15 185' fill='none' stroke='%23a5d6a7' stroke-width='0.8' opacity='0.7'/></svg>); repeat: 2.5 2;"></a-box>
+        <a-box position="-2.5 1.5 -6.0" width="0.1" height="3" depth="3.0" material="shader: flat; color: #e8f5e9; src: url(data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='200' viewBox='0 0 100 200'><rect width='100' height='200' fill='%23e8f5e9'/><path d='M15 0 Q 35 50 20 100 T 75 160 T 35 200' fill='none' stroke='%23c8e6c9' stroke-width='1.5'/><path d='M85 15 Q 55 75 75 125 T 15 185' fill='none' stroke='%23a5d6a7' stroke-width='0.8' opacity='0.7'/></svg>); repeat: 1.5 2;"></a-box>
+        <a-box position="-2.5 1.5 -12.25" width="0.1" height="3" depth="5.5" material="shader: flat; color: #e8f5e9; src: url(data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='200' viewBox='0 0 100 200'><rect width='100' height='200' fill='%23e8f5e9'/><path d='M15 0 Q 35 50 20 100 T 75 160 T 35 200' fill='none' stroke='%23c8e6c9' stroke-width='1.5'/><path d='M85 15 Q 55 75 75 125 T 15 185' fill='none' stroke='%23a5d6a7' stroke-width='0.8' opacity='0.7'/></svg>); repeat: 2.5 2;"></a-box>
+
+        <!-- [باقي عناصر التصميم والجدران والأعمدة كما هي تماماً لضمان سلامة الكود والحدود المسؤولة عن الحركة] -->
+        <a-box id="skirting-left-1" position="-2.44 0.06 10.5" width="0.02" height="0.12" depth="1.0" color="#5c3a21" material="shader: flat;"></a-box>
+        <a-box id="skirting-left-2a" position="-2.44 0.06 7.875" width="0.02" height="0.12" depth="2.25" color="#5c3a21" material="shader: flat;"></a-box>
+        <a-box id="skirting-left-2b" position="-2.44 0.06 3.625" width="0.02" height="0.12" depth="2.25" color="#5c3a21" material="shader: flat;"></a-box>
+        <a-box id="skirting-left-3" position="-2.44 0.06 -1.0" width="0.02" height="0.12" depth="5.0" color="#5c3a21" material="shader: flat;"></a-box>
+        <a-box id="skirting-left-4" position="-2.44 0.06 -6.0" width="0.02" height="0.12" depth="3.0" color="#5c3a21" material="shader: flat;"></a-box>
+        <a-box id="skirting-left-5" position="-2.44 0.06 -12.25" width="0.02" height="0.12" depth="5.5" color="#5c3a21" material="shader: flat;"></a-box>
+        <a-box position="2.5 1.5 10.5" width="0.1" height="3" depth="1.0" material="shader: flat; color: #e8f5e9; src: url(data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='200' viewBox='0 0 100 200'><rect width='100' height='200' fill='%23e8f5e9'/><path d='M15 0 Q 35 50 20 100 T 75 160 T 35 200' fill='none' stroke='%23c8e6c9' stroke-width='1.5'/><path d='M85 15 Q 55 75 75 125 T 15 185' fill='none' stroke='%23a5d6a7' stroke-width='0.8' opacity='0.7'/></svg>); repeat: 1 2;"></a-box>
+        <a-box position="2.5 1.5 7.875" width="0.1" height="3" depth="2.25" material="shader: flat; color: #e8f5e9; src: url(data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='200' viewBox='0 0 100 200'><rect width='100' height='200' fill='%23e8f5e9'/><path d='M15 0 Q 35 50 20 100 T 75 160 T 35 200' fill='none' stroke='%23c8e6c9' stroke-width='1.5'/><path d='M85 15 Q 55 75 75 125 T 15 185' fill='none' stroke='%23a5d6a7' stroke-width='0.8' opacity='0.7'/></svg>); repeat: 1 2;"></a-box>
+        <a-box position="2.5 1.5 3.625" width="0.1" height="3" depth="2.25" material="shader: flat; color: #e8f5e9; src: url(data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='200' viewBox='0 0 100 200'><rect width='100' height='200' fill='%23e8f5e9'/><path d='M15 0 Q 35 50 20 100 T 75 160 T 35 200' fill='none' stroke='%23c8e6c9' stroke-width='1.5'/><path d='M85 15 Q 55 75 75 125 T 15 185' fill='none' stroke='%23a5d6a7' stroke-width='0.8' opacity='0.7'/></svg>); repeat: 1 2;"></a-box>
+        <a-box position="2.5 1.5 -1.0" width="0.1" height="3" depth="5.0" material="shader: flat; color: #e8f5e9; src: url(data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='200' viewBox='0 0 100 200'><rect width='100' height='200' fill='%23e8f5e9'/><path d='M15 0 Q 35 50 20 100 T 75 160 T 35 200' fill='none' stroke='%23c8e6c9' stroke-width='1.5'/><path d='M85 15 Q 55 75 75 125 T 15 185' fill='none' stroke='%23a5d6a7' stroke-width='0.8' opacity='0.7'/></svg>); repeat: 2.5 2;"></a-box>
+        <a-box position="2.5 1.5 -6.0" width="0.1" height="3" depth="3.0" material="shader: flat; color: #e8f5e9; src: url(data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='200' viewBox='0 0 100 200'><rect width='100' height='200' fill='%23e8f5e9'/><path d='M15 0 Q 35 50 20 100 T 75 160 T 35 200' fill='none' stroke='%23c8e6c9' stroke-width='1.5'/><path d='M85 15 Q 55 75 75 125 T 15 185' fill='none' stroke='%23a5d6a7' stroke-width='0.8' opacity='0.7'/></svg>); repeat: 2.5 2;"></a-box>
+        <a-box position="2.5 1.5 -12.25" width="0.1" height="3" depth="5.5" material="shader: flat; color: #e8f5e9; src: url(data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='200' viewBox='0 0 100 200'><rect width='100' height='200' fill='%23e8f5e9'/><path d='M15 0 Q 35 50 20 100 T 75 160 T 35 200' fill='none' stroke='%23c8e6c9' stroke-width='1.5'/><path d='M85 15 Q 55 75 75 125 T 15 185' fill='none' stroke='%23a5d6a7' stroke-width='0.8' opacity='0.7'/></svg>); repeat: 2.5 2;"></a-box>
+
+        <!-- الغرف الخلفية والجانبية الملونة -->
+        <a-box position="-7.75 1.5 -17" width="10.5" height="3" depth="0.1" color="#f0fdf4" material="shader: flat;"></a-box>
+        <a-plane color="#d4f4e1" rotation="90 0 0" position="-7.75 3 -13.5" width="10.5" height="7" material="shader: flat;"></a-plane>
+        <a-box position="-7.75 1.5 -11" width="10.5" height="3" depth="0.1" color="#f0f9ff" material="shader: flat;"></a-box>
+        <a-plane color="#cde4f9" rotation="90 0 0" position="-7.75 3 -7.75" width="10.5" height="6.5" material="shader: flat;"></a-plane>
+        <a-box position="7.75 1.5 -17" width="10.5" height="3" depth="0.1" color="#fafaf9" material="shader: flat;"></a-box>
+        <a-plane color="#f0eded" rotation="90 0 0" position="7.75 3 -13.5" width="10.5" height="7" material="shader: flat;"></a-plane>
+        <a-box position="7.75 1.5 -11" width="10.5" height="3" depth="0.1" color="#fff7ed" material="shader: flat;"></a-box>
+        <a-plane color="#f9e8d3" rotation="90 0 0" position="7.75 3 -7.75" width="10.5" height="6.5" material="shader: flat;"></a-plane>
+        
+    </a-scene>
+
+    <div class="interface-layer">
+        <div id="btn-save" class="btn top-btn interactive">💾</div>
+        <div id="btn-settings" class="btn top-btn interactive">⚙️</div>
+
+        <div id="welcome-overlay" class="interactive" onclick="alert('فتح اللوحة الأكاديمية الذكية للتسجيل والقبول...')">
+            <h1>Welcome to 3D Axis College</h1>
+            <p>Click here to view Academic Registration Panel</p>
+        </div>
+
+        <!-- أزرار تحريك الافتار (المساعد الذكي) -->
+        <div id="avatar-control-panel" class="control-panel interactive">
+            <div class="btn" id="avatar-forward">🚶‍♂️ تقدم الافتار</div>
+            <div class="btn" id="avatar-back">🚶‍♂️ تراجع الافتار</div>
+            <div class="btn" id="avatar-rotate">🔄 تدوير الافتار</div>
+        </div>
+
+        <div id="altitude-panel" class="control-panel interactive">
+            <div class="btn" id="move-up">▲</div>
+            <div class="btn" id="move-down">▼</div>
+        </div>
+
+        <div id="rotation-panel" class="control-panel interactive">
+            <div class="btn" id="rotate-left">↶</div>
+            <div class="btn" id="rotate-right">↷</div>
+        </div>
+
+        <div id="movement-panel" class="control-panel interactive">
+            <div class="row">
+                <div class="btn blue-arrow" id="turn-left">↴</div>
+                <div class="btn blue-arrow" id="turn-right">↳</div>
+            </div>
+            <div class="row" style="margin-top: 4px;">
+                <div class="btn" id="move-forward">▲ المشي للأمام</div>
+            </div>
+            <div class="row" style="margin-top: 4px;">
+                <div class="btn blue-arrow" id="strafe-left">◀</div>
+                <div class="btn" id="move-back">▼ للخلف</div>
+                <div class="btn blue-arrow" id="strafe-right">▶</div>
+            </div>
+        </div>
     </div>
 
     <script>
-        let scene, camera, renderer, controls, mixer;
-        let animations = [];
-        let clock = new THREE.Clock();
+        const cameraRig = document.getElementById('camera-rig');
+        const mainCamera = document.getElementById('main-camera');
+        const aiAvatar = document.getElementById('ai-avatar');
 
-        function init() {
-            const container = document.getElementById('canvas-container');
+        const moveSpeed = 0.15;
+        const rotateSpeed = 2.8; 
+        const cameraRadius = 0.42; 
 
-            // 1. إنشاء المشهد
-            scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x222222);
+        let activeInterval = null;
 
-            // 2. الكاميرا
-            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
-            camera.position.set(0, 2, 5);
+        function isPositionSafe(nextX, nextZ) {
+            if (nextX + cameraRadius >= 13 || nextX - cameraRadius <= -13) return false;
+            if (nextZ + cameraRadius >= 17 || nextZ - cameraRadius <= -17) return false;
 
-            // 3. الإضاءة
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
-            scene.add(ambientLight);
-
-            const dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
-            dirLight.position.set(5, 10, 7);
-            scene.add(dirLight);
-
-            // 4. محرك الرندرة
-            renderer = new THREE.WebGLRenderer({ antialias: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(window.devicePixelRatio);
-            container.appendChild(renderer.domElement);
-
-            // 5. التحكم بالكاميرا عبر السحب والماوس واللمس
-            controls = new THREE.OrbitControls(camera, renderer.domElement);
-            controls.enableDamping = true;
-            controls.target.set(0, 1, 0);
-
-            // 6. تحميل المجسم ثلاثي الأبعاد
-            // ملاحظة: قم بتغيير 'character.gltf' إلى اسم ومسار ملف مجسمك الفعلي
-            const loader = new THREE.GLTFLoader(); 
-            loader.load('character.gltf', function (gltf) {
-                const model = gltf.scene;
-                scene.add(model);
-
-                // إعداد الأنيميشن والمتحكم بالحركة (Mixer)
-                mixer = new THREE.AnimationMixer(model);
-                animations = gltf.animations;
-
-                // تشغيل الحركة الأولى تلقائياً إذا كانت موجودة
-                if(animations.length > 0) {
-                    mixer.clipAction(animations[0]).play();
+            if (nextX - cameraRadius <= -2.5 && nextX >= -3.1) {
+                if (!(nextZ > 8.0 && nextZ < 10.0) && !(nextZ > 4.75 && nextZ < 6.75) && !(nextZ > 1.0 && nextZ < 3.0) && !(nextZ > -5.0 && nextZ < -3.0) && !(nextZ > -10.0 && nextZ < -8.0)) {
+                    return false;
                 }
+            }
 
-            }, undefined, function (error) {
-                console.error('حدث خطأ أثناء تحميل المجسم:', error);
-            });
+            if (nextX + cameraRadius >= 2.5 && nextX <= 3.1) {
+                if (!(nextZ > 8.0 && nextZ < 10.0) && !(nextZ > 4.75 && nextZ < 6.75) && !(nextZ > 1.0 && nextZ < 3.0) && !(nextZ > -5.0 && nextZ < -3.0) && !(nextZ > -10.0 && nextZ < -8.0)) {
+                    return false;
+                }
+            }
 
-            window.addEventListener('resize', onWindowResize);
-            animate();
+            if (Math.abs(nextZ - 11) <= cameraRadius) {
+                if (nextX < -2.5 || nextX > 2.5) return false;
+            }
+
+            if (Math.abs(nextZ - 7.5) <= cameraRadius || Math.abs(nextZ - 2.5) <= cameraRadius || Math.abs(nextZ + 4.5) <= cameraRadius || Math.abs(nextZ + 11) <= cameraRadius) {
+                if (Math.abs(nextX) > 2.5) return false; 
+            }
+
+            return true; 
         }
 
-        // تشغيل حركة معينة بناءً على الضغط على الزر
-        function playAnimation(index) {
-            if (mixer && animations[index]) {
-                mixer.stopAllAction();
-                const action = mixer.clipAction(animations[index]);
-                action.fadeIn(0.5); // انتقال ناعم بين الحركات
-                action.play();
-            } else {
-                alert("هذه الحركة غير متوفرة في ملف المجسم الحالي.");
+        function startAction(actionFunction) {
+            if (activeInterval) clearInterval(activeInterval);
+            actionFunction(); 
+            activeInterval = setInterval(actionFunction, 40); 
+        }
+
+        function stopAction() {
+            if (activeInterval) {
+                clearInterval(activeInterval);
+                activeInterval = null;
             }
         }
 
-        // إيقاف كل الحركات
-        function stopAllAnimations() {
-            if (mixer) {
-                mixer.stopAllAction();
-            }
+        function setupButton(elementId, action) {
+            const btn = document.getElementById(elementId);
+            if (!btn) return;
+            btn.addEventListener('touchstart', (e) => { e.preventDefault(); startAction(action); });
+            btn.addEventListener('touchend', stopAction);
+            btn.addEventListener('mousedown', () => startAction(action));
+            btn.addEventListener('mouseup', stopAction);
+            btn.addEventListener('mouseleave', stopAction);
         }
 
-        function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        }
+        // إعداد حركة المستخدم الثابتة
+        setupButton('move-forward', () => {
+            let pos = cameraRig.getAttribute('position');
+            let rot = mainCamera.getAttribute('rotation');
+            let angle = (rot.y * Math.PI) / 180;
+            let nextX = pos.x - Math.sin(angle) * moveSpeed;
+            let nextZ = pos.z - Math.cos(angle) * moveSpeed;
+            if (isPositionSafe(nextX, nextZ)) { pos.x = nextX; pos.z = nextZ; cameraRig.setAttribute('position', pos); }
+        });
 
-        // حلقة التحديث المستمر لإظهار الحركة
-        function animate() {
-            requestAnimationFrame(animate);
-            
-            const delta = clock.getDelta();
-            if (mixer) mixer.update(delta);
-            
-            controls.update();
-            renderer.render(scene, camera);
-        }
+        setupButton('move-back', () => {
+            let pos = cameraRig.getAttribute('position');
+            let rot = mainCamera.getAttribute('rotation');
+            let angle = (rot.y * Math.PI) / 180;
+            let nextX = pos.x + Math.sin(angle) * moveSpeed;
+            let nextZ = pos.z + Math.cos(angle) * moveSpeed;
+            if (isPositionSafe(nextX, nextZ)) { pos.x = nextX; pos.z = nextZ; cameraRig.setAttribute('position', pos); }
+        });
 
-        // تشغيل الكود عند فتح الصفحة
-        init();
+        setupButton('strafe-left', () => {
+            let pos = cameraRig.getAttribute('position');
+            let rot = mainCamera.getAttribute('rotation');
+            let angle = ((rot.y + 90) * Math.PI) / 180;
+            let nextX = pos.x - Math.sin(angle) * moveSpeed;
+            let nextZ = pos.z - Math.cos(angle) * moveSpeed;
+            if (isPositionSafe(nextX, nextZ)) { pos.x = nextX; pos.z = nextZ; cameraRig.setAttribute('position', pos); }
+        });
+
+        setupButton('strafe-right', () => {
+            let pos = cameraRig.getAttribute('position');
+            let rot = mainCamera.getAttribute('rotation');
+            let angle = ((rot.y + 90) * Math.PI) / 180;
+            let nextX = pos.x + Math.sin(angle) * moveSpeed;
+            let nextZ = pos.z + Math.cos(angle) * moveSpeed;
+            if (isPositionSafe(nextX, nextZ)) { pos.x = nextX; pos.z = nextZ; cameraRig.setAttribute('position', pos); }
+        });
+
+        setupButton('move-up', () => {
+            let pos = cameraRig.getAttribute('position');
+            if(pos.y < 2.3) { pos.y += moveSpeed; cameraRig.setAttribute('position', pos); }
+        });
+
+        setupButton('move-down', () => {
+            let pos = cameraRig.getAttribute('position');
+            if(pos.y > 0.1) { pos.y -= moveSpeed; cameraRig.setAttribute('position', pos); }
+        });
+
+        setupButton('rotate-left', () => { let rot = mainCamera.getAttribute('rotation'); rot.y += rotateSpeed; mainCamera.setAttribute('rotation', rot); });
+        setupButton('rotate-right', () => { let rot = mainCamera.getAttribute('rotation'); rot.y -= rotateSpeed; mainCamera.setAttribute('rotation', rot); });
+        setupButton('turn-left', () => { let rot = mainCamera.getAttribute('rotation'); rot.y += rotateSpeed * 1.8; mainCamera.setAttribute('rotation', rot); });
+        setupButton('turn-right', () => { let rot = mainCamera.getAttribute('rotation'); rot.y -= rotateSpeed * 1.8; mainCamera.setAttribute('rotation', rot); });
+
+        // متحكمات حركة الافتار الجديد (AI Avatar)
+        setupButton('avatar-forward', () => {
+            let pos = aiAvatar.getAttribute('position');
+            let rot = aiAvatar.getAttribute('rotation');
+            let angle = (rot.y * Math.PI) / 180;
+            pos.x += Math.sin(angle) * 0.1;
+            pos.z += Math.cos(angle) * 0.1;
+            aiAvatar.setAttribute('position', pos);
+        });
+
+        setupButton('avatar-back', () => {
+            let pos = aiAvatar.getAttribute('position');
+            let rot = aiAvatar.getAttribute('rotation');
+            let angle = (rot.y * Math.PI) / 180;
+            pos.x -= Math.sin(angle) * 0.1;
+            pos.z -= Math.cos(angle) * 0.1;
+            aiAvatar.setAttribute('position', pos);
+        });
+
+        setupButton('avatar-rotate', () => {
+            let rot = aiAvatar.getAttribute('rotation');
+            rot.y = (rot.y + 5) % 360;
+            aiAvatar.setAttribute('rotation', rot);
+        });
     </script>
 </body>
 </html>
