@@ -3,332 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>3D Axis - College Light Environment</title>
+    <title>3D Axis - Real Human Avatar Test</title>
+    <!-- مكتبة A-Frame -->
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <!-- مكتبة تشغيل أنيميشن والحركات للمجسمات -->
+    <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.2.0/dist/aframe-extras.min.js"></script>
     
     <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            overflow: hidden;
-            font-family: 'Segoe UI', Arial, sans-serif;
-            user-select: none;
-            -webkit-user-select: none;
-            background-color: #000;
-        }
-
-        .interface-layer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 9999;
-        }
-
-        .interactive {
-            pointer-events: auto;
-        }
-
-        #welcome-overlay {
-            position: absolute;
-            top: 12%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: rgba(24, 24, 27, 0.85);
-            color: white;
-            padding: 12px 25px;
-            text-align: center;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.25);
-            max-width: 85%;
-        }
-
-        #welcome-overlay h1 { font-size: 1.3rem; margin: 0 0 5px 0; }
-        #welcome-overlay p { font-size: 0.85rem; margin: 0; color: #e4e4e7; }
-
-        .control-panel {
-            position: absolute;
-            background-color: rgba(255, 255, 255, 0.94);
-            border-radius: 20px;
-            padding: 10px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            display: flex;
-            gap: 8px;
-        }
-
-        .btn {
-            background-color: #f4f4f5;
-            border: 1px solid #e4e4e7;
-            border-radius: 12px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.3rem;
-            color: #27272a;
-            cursor: pointer;
-            transition: background-color 0.1s, transform 0.05s;
-            width: 48px;
-            height: 48px;
-        }
-
-        .btn:active {
-            background-color: #38bdf8;
-            color: white;
-            transform: scale(0.95);
-        }
-
-        #movement-panel {
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .row { display: flex; gap: 8px; }
-        #altitude-panel { left: 15px; bottom: 30px; flex-direction: column; }
-        #rotation-panel { right: 15px; bottom: 30px; flex-direction: column; }
-
-        #avatar-control-panel {
-            top: 15px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(15, 23, 42, 0.9);
-            border: 1px solid #38bdf8;
-        }
-        #avatar-control-panel .btn {
-            background-color: #1e293b;
-            color: #38bdf8;
-            border: 1px solid #334155;
-            font-size: 0.9rem;
-            width: auto;
-            padding: 0 15px;
-            height: 40px;
-        }
-        #avatar-control-panel .btn:active {
-            background-color: #38bdf8;
-            color: #0f172a;
-        }
-
-        .top-btn { position: absolute; top: 15px; background-color: white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        #btn-save { left: 15px; }
-        #btn-settings { right: 15px; }
-        .blue-arrow { color: #0284c7; font-weight: bold; }
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: sans-serif; background: #000; }
+        .interface-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
+        .interactive { pointer-events: auto; }
+        .control-panel { position: absolute; background: rgba(255, 255, 255, 0.9); border-radius: 15px; padding: 8px; display: flex; gap: 5px; }
+        .btn { background: #f4f4f5; border: 1px solid #ccc; border-radius: 8px; padding: 8px 12px; font-size: 0.9rem; cursor: pointer; }
+        .btn:active { background: #38bdf8; color: white; }
+        #avatar-panel { top: 10px; left: 50%; transform: translateX(-50%); }
+        #nav-panel { bottom: 15px; left: 50%; transform: translateX(-50%); flex-direction: column; align-items: center; }
     </style>
 </head>
 <body>
 
     <a-scene embedded vr-mode-ui="enabled: false">
-        
-        <!-- إضاءة المشهد -->
-        <a-light type="ambient" color="#ffffff" intensity="1.4"></a-light>
-        <a-light type="directional" color="#ffffff" intensity="0.8" position="5 15 5"></a-light>
+        <a-light type="ambient" color="#ffffff" intensity="1.5"></a-light>
+        <a-light type="directional" color="#ffffff" intensity="1.0" position="5 10 5"></a-light>
 
-        <!-- الكاميرا والتحكم -->
-        <a-entity id="camera-rig" position="0 0.2 14">
-            <a-entity id="main-camera" camera look-controls="magicWindowTrackingEnabled: true; touchEnabled: true">
-                <a-ellipse position="0 0 -1" radius-x="0.008" radius-y="0.008" color="#ef4444"></a-ellipse>
-            </a-entity>
+        <!-- الكاميرا -->
+        <a-entity id="camera-rig" position="0 0 5">
+            <a-entity id="main-camera" camera look-controls="magicWindowTrackingEnabled: true; touchEnabled: true"></a-entity>
         </a-entity>
 
-        <!-- 🤖 أفتار مساعد ذكي خفيف ومبني داخل الكود مباشرة لضمان السرعة عدم التعليق -->
-        <a-entity id="ai-avatar" position="0 0 11" rotation="0 180 0">
-            <!-- الرأس -->
-            <a-sphere position="0 1.5 0" radius="0.25" color="#38bdf8" material="metalness: 0.5"></a-sphere>
-            <!-- العينين -->
-            <a-sphere position="-0.08 1.55 -0.2" radius="0.04" color="#ffffff"></a-sphere>
-            <a-sphere position="0.08 1.55 -0.2" radius="0.04" color="#ffffff"></a-sphere>
-            <!-- الجسم -->
-            <a-cylinder position="0 0.85 0" radius="0.2" height="0.9" color="#0284c7"></a-cylinder>
-            <!-- القاعدة/الأقدام -->
-            <a-cylinder position="0 0.2 0" radius="0.25" height="0.4" color="#1e293b"></a-cylinder>
+        <!-- 👤 أفتار بشري حقيقي متحرك جاهز خفيف للغاية (GLB) -->
+        <a-entity id="real-avatar" 
+                  gltf-model="https://models.readyplayer.me/6460d37574a3827772873a20.glb" 
+                  position="0 0 0" 
+                  rotation="0 0 0" 
+                  scale="1 1 1"
+                  animation-mixer>
         </a-entity>
 
-        <!-- الأرضية والجدران والتقسيمات الخاص بالكلية -->
-        <a-plane position="0 0 0" rotation="-90 0 0" width="40" height="40" color="#f1f5f9" material="shader: flat;"></a-plane>
-        
-        <a-plane color="#e0f7fa" rotation="90 0 0" position="0 3 13.5" width="26" height="7" material="shader: flat;"></a-plane>
-        <a-plane color="#fff8e1" rotation="90 0 0" position="0 3 0" width="5" height="20" material="shader: flat;"></a-plane>
-
-        <a-box id="college-outer-wall-back" position="0 1.5 -17" width="26" height="3" depth="0.1" color="#cbd5e1" material="shader: flat;"></a-box>
-        <a-box id="college-outer-wall-front" position="0 1.5 17" width="26" height="3" depth="0.1" color="#cbd5e1" material="shader: flat;"></a-box>
-        <a-box id="college-outer-wall-left" position="-13 1.5 0" width="0.1" height="3" depth="34" color="#cbd5e1" material="shader: flat;"></a-box>
-        <a-box id="college-outer-wall-right" position="13 1.5 0" width="0.1" height="3" depth="34" color="#cbd5e1" material="shader: flat;"></a-box>
-
-        <a-box id="lobby-wall-left" position="-7.75 1.5 11" width="10.5" height="3" depth="0.1" color="#fef08a" material="shader: flat;"></a-box>
-        <a-box id="lobby-wall-right" position="7.75 1.5 11" width="10.5" height="3" depth="0.1" color="#fef08a" material="shader: flat;"></a-box>
-
-        <!-- النعلات والجدران الداخلية -->
-        <a-box position="-2.5 1.5 10.5" width="0.1" height="3" depth="1.0" color="#a7f3d0" material="shader: flat;"></a-box>
-        <a-box position="-2.5 1.5 7.875" width="0.1" height="3" depth="2.25" color="#a7f3d0" material="shader: flat;"></a-box>
-        <a-box position="-2.5 1.5 3.625" width="0.1" height="3" depth="2.25" color="#a7f3d0" material="shader: flat;"></a-box>
-        <a-box position="-2.5 1.5 -1.0" width="0.1" height="3" depth="5.0" color="#a7f3d0" material="shader: flat;"></a-box>
-        
-        <a-box position="2.5 1.5 10.5" width="0.1" height="3" depth="1.0" color="#a7f3d0" material="shader: flat;"></a-box>
-        <a-box position="2.5 1.5 7.875" width="0.1" height="3" depth="2.25" color="#a7f3d0" material="shader: flat;"></a-box>
-        <a-box position="2.5 1.5 3.625" width="0.1" height="3" depth="2.25" color="#a7f3d0" material="shader: flat;"></a-box>
-        <a-box position="2.5 1.5 -1.0" width="0.1" height="3" depth="5.0" color="#a7f3d0" material="shader: flat;"></a-box>
-
-        <!-- النعلات الخشبية -->
-        <a-box position="-2.44 0.06 10.5" width="0.02" height="0.12" depth="1.0" color="#5c3a21" material="shader: flat;"></a-box>
-        <a-box position="2.44 0.06 10.5" width="0.02" height="0.12" depth="1.0" color="#5c3a21" material="shader: flat;"></a-box>
-
+        <!-- الأرضية -->
+        <a-plane position="0 0 0" rotation="-90 0 0" width="20" height="20" color="#e2e8f0"></a-plane>
     </a-scene>
 
     <div class="interface-layer">
-        <div id="btn-save" class="btn top-btn interactive">💾</div>
-        <div id="btn-settings" class="btn top-btn interactive">⚙️</div>
-
-        <div id="welcome-overlay" class="interactive" onclick="alert('فتح اللوحة الأكاديمية الذكية للتسجيل والقبول...')">
-            <h1>Welcome to 3D Axis College</h1>
-            <p>Click here to view Academic Registration Panel</p>
-        </div>
-
-        <!-- أزرار تحريك الافتار -->
-        <div id="avatar-control-panel" class="control-panel interactive">
-            <div class="btn" id="avatar-forward">🚶‍♂️ تقدم الافتار</div>
-            <div class="btn" id="avatar-back">🚶‍♂️ تراجع الافتار</div>
-            <div class="btn" id="avatar-rotate">🔄 تدوير الافتار</div>
-        </div>
-
-        <div id="altitude-panel" class="control-panel interactive">
-            <div class="btn" id="move-up">▲</div>
-            <div class="btn" id="move-down">▼</div>
-        </div>
-
-        <div id="rotation-panel" class="control-panel interactive">
-            <div class="btn" id="rotate-left">↶</div>
-            <div class="btn" id="rotate-right">↷</div>
-        </div>
-
-        <div id="movement-panel" class="control-panel interactive">
-            <div class="row">
-                <div class="btn blue-arrow" id="turn-left">↴</div>
-                <div class="btn blue-arrow" id="turn-right">↳</div>
-            </div>
-            <div class="row" style="margin-top: 4px;">
-                <div class="btn" id="move-forward">▲ المشي للأمام</div>
-            </div>
-            <div class="row" style="margin-top: 4px;">
-                <div class="btn blue-arrow" id="strafe-left">◀</div>
-                <div class="btn" id="move-back">▼ للخلف</div>
-                <div class="btn blue-arrow" id="strafe-right">▶</div>
-            </div>
+        <!-- تحريك الأفتار الحقيقي -->
+        <div id="avatar-panel" class="control-panel interactive">
+            <button class="btn" id="av-fwd">🚶‍♂️ تقديم الأفتار</button>
+            <button class="btn" id="av-back">🚶‍♂️ إرجاع الأفتار</button>
+            <button class="btn" id="av-rot">🔄 تدوير</button>
         </div>
     </div>
 
     <script>
-        const cameraRig = document.getElementById('camera-rig');
-        const mainCamera = document.getElementById('main-camera');
-        const aiAvatar = document.getElementById('ai-avatar');
-
-        const moveSpeed = 0.15;
-        const rotateSpeed = 2.8; 
-
-        let activeInterval = null;
-
-        function startAction(actionFunction) {
-            if (activeInterval) clearInterval(activeInterval);
-            actionFunction(); 
-            activeInterval = setInterval(actionFunction, 40); 
+        const avatar = document.getElementById('real-avatar');
+        
+        function moveAvatar(dx, dz) {
+            let pos = avatar.getAttribute('position');
+            pos.x += dx;
+            pos.z += dz;
+            avatar.setAttribute('position', pos);
         }
 
-        function stopAction() {
-            if (activeInterval) {
-                clearInterval(activeInterval);
-                activeInterval = null;
-            }
+        function rotateAvatar(angle) {
+            let rot = avatar.getAttribute('rotation');
+            rot.y += angle;
+            avatar.setAttribute('rotation', rot);
         }
 
-        function setupButton(elementId, action) {
-            const btn = document.getElementById(elementId);
-            if (!btn) return;
-            btn.addEventListener('touchstart', (e) => { e.preventDefault(); startAction(action); });
-            btn.addEventListener('touchend', stopAction);
-            btn.addEventListener('mousedown', () => startAction(action));
-            btn.addEventListener('mouseup', stopAction);
-            btn.addEventListener('mouseleave', stopAction);
-        }
-
-        // حركة المستخدم
-        setupButton('move-forward', () => {
-            let pos = cameraRig.getAttribute('position');
-            let rot = mainCamera.getAttribute('rotation');
-            let angle = (rot.y * Math.PI) / 180;
-            pos.x -= Math.sin(angle) * moveSpeed;
-            pos.z -= Math.cos(angle) * moveSpeed;
-            cameraRig.setAttribute('position', pos);
-        });
-
-        setupButton('move-back', () => {
-            let pos = cameraRig.getAttribute('position');
-            let rot = mainCamera.getAttribute('rotation');
-            let angle = (rot.y * Math.PI) / 180;
-            pos.x += Math.sin(angle) * moveSpeed;
-            pos.z += Math.cos(angle) * moveSpeed;
-            cameraRig.setAttribute('position', pos);
-        });
-
-        setupButton('strafe-left', () => {
-            let pos = cameraRig.getAttribute('position');
-            let rot = mainCamera.getAttribute('rotation');
-            let angle = ((rot.y + 90) * Math.PI) / 180;
-            pos.x -= Math.sin(angle) * moveSpeed;
-            pos.z -= Math.cos(angle) * moveSpeed;
-            cameraRig.setAttribute('position', pos);
-        });
-
-        setupButton('strafe-right', () => {
-            let pos = cameraRig.getAttribute('position');
-            let rot = mainCamera.getAttribute('rotation');
-            let angle = ((rot.y + 90) * Math.PI) / 180;
-            pos.x += Math.sin(angle) * moveSpeed;
-            pos.z += Math.cos(angle) * moveSpeed;
-            cameraRig.setAttribute('position', pos);
-        });
-
-        setupButton('move-up', () => {
-            let pos = cameraRig.getAttribute('position');
-            if(pos.y < 2.3) { pos.y += moveSpeed; cameraRig.setAttribute('position', pos); }
-        });
-
-        setupButton('move-down', () => {
-            let pos = cameraRig.getAttribute('position');
-            if(pos.y > 0.1) { pos.y -= moveSpeed; cameraRig.setAttribute('position', pos); }
-        });
-
-        setupButton('rotate-left', () => { let rot = mainCamera.getAttribute('rotation'); rot.y += rotateSpeed; mainCamera.setAttribute('rotation', rot); });
-        setupButton('rotate-right', () => { let rot = mainCamera.getAttribute('rotation'); rot.y -= rotateSpeed; mainCamera.setAttribute('rotation', rot); });
-        setupButton('turn-left', () => { let rot = mainCamera.getAttribute('rotation'); rot.y += rotateSpeed * 1.8; mainCamera.setAttribute('rotation', rot); });
-        setupButton('turn-right', () => { let rot = mainCamera.getAttribute('rotation'); rot.y -= rotateSpeed * 1.8; mainCamera.setAttribute('rotation', rot); });
-
-        // حركة الأفتار
-        setupButton('avatar-forward', () => {
-            let pos = aiAvatar.getAttribute('position');
-            let rot = aiAvatar.getAttribute('rotation');
-            let angle = (rot.y * Math.PI) / 180;
-            pos.x += Math.sin(angle) * 0.1;
-            pos.z += Math.cos(angle) * 0.1;
-            aiAvatar.setAttribute('position', pos);
-        });
-
-        setupButton('avatar-back', () => {
-            let pos = aiAvatar.getAttribute('position');
-            let rot = aiAvatar.getAttribute('rotation');
-            let angle = (rot.y * Math.PI) / 180;
-            pos.x -= Math.sin(angle) * 0.1;
-            pos.z -= Math.cos(angle) * 0.1;
-            aiAvatar.setAttribute('position', pos);
-        });
-
-        setupButton('avatar-rotate', () => {
-            let rot = aiAvatar.getAttribute('rotation');
-            rot.y = (rot.y + 10) % 360;
-            aiAvatar.setAttribute('rotation', rot);
-        });
+        document.getElementById('av-fwd').addEventListener('click', () => moveAvatar(0, -0.2));
+        document.getElementById('av-back').addEventListener('click', () => moveAvatar(0, 0.2));
+        document.getElementById('av-rot').addEventListener('click', () => rotateAvatar(15));
     </script>
 </body>
 </html>
