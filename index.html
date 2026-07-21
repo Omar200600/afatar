@@ -6,14 +6,11 @@
     <title>متجر عمر المضيء الصافي - أكسيس 3D</title>
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <style>
-        /* إخفاء أي حوارات أو لوحات تلقائية خاصة بـ VR نهائياً */
         .a-dialog, .a-dialog-container, .a-enter-vr, .a-enter-ar { display: none !important; visibility: hidden !important; pointer-events: none !important; }
 
-        /* لوحات التحكم الرئيسية */
         #nav-panel { position: fixed; top: 10px; right: 10px; z-index: 9999; background: white; border: 2px solid #D4AF37; padding: 10px; border-radius: 10px; width: 140px; }
         #management-ui { position: fixed; top: 10px; left: 10px; background: white; padding: 10px; border: 2px solid #28a745; border-radius: 10px; z-index: 9999; width: 185px; }
         
-        /* شريط إدارة وحذف المنتجات الأفقي الأنيق الموفر للمساحة */
         #products-list-ui { position: fixed; top: 175px; left: 10px; background: rgba(255, 255, 255, 0.95); padding: 8px; border: 2px solid #D4AF37; border-radius: 10px; z-index: 9999; width: 185px; font-family: sans-serif; font-size: 12px; }
         #list-container { display: flex; flex-direction: row; gap: 8px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: thin; }
         
@@ -21,18 +18,15 @@
         .product-item span { max-width: 50px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 3px; font-weight: bold; }
         .btn-delete { background: #ff4d4d; color: white; border: none; padding: 2px 5px; border-radius: 4px; cursor: pointer; font-size: 10px; font-weight: bold; width: 100%; }
         
-        /* لوحة التحكم الخاصة بالأفتار */
         #avatar-ui { position: fixed; top: 10px; left: 50%; transform: translateX(-50%); background: rgba(0, 0, 0, 0.8); padding: 8px 12px; border: 2px solid #38bdf8; border-radius: 12px; z-index: 9999; display: flex; gap: 6px; }
         .avatar-btn { background: #0284c7; color: white; border: none; padding: 6px 10px; border-radius: 6px; font-weight: bold; font-size: 11px; cursor: pointer; }
         .avatar-btn:active { background: #38bdf8; }
 
-        /* نافذة الإشعارات الذكية البديلة لنوافذ المتصفح */
         #custom-alert { display: none; position: fixed; bottom: 20px; right: 20px; background: #333; color: #fff; padding: 12px 25px; border-radius: 5px; z-index: 10000; font-weight: bold; }
 
         .btn-action { width: 100%; padding: 8px; margin-top: 5px; border-radius: 5px; border: none; cursor: pointer; font-weight: bold; color: white; }
         input { width: 90%; margin: 4px 0; padding: 5px; }
 
-        /* أزرار الحركة الدائرية الفخمة */
         .control-btn { position: fixed; width: 55px; height: 55px; background: rgba(212, 175, 55, 1); border: 2px solid white; border-radius: 50%; z-index: 9999; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; touch-action: none; font-size: 20px; }
         #up { bottom: 120px; left: 80px; } 
         #down { bottom: 20px; left: 80px; } 
@@ -46,7 +40,6 @@
         <button class="btn-action" style="background:#8B4513;" onclick="window.location.href='corridor.html'">🏃 العودة للممر</button>
     </div>
 
-    <!-- لوحة التحكم الحركي الخاصة بالأفتار -->
     <div id="avatar-ui">
         <button class="avatar-btn" id="av-fwd">🚶‍♂️ تقديم الأفتار</button>
         <button class="avatar-btn" id="av-back">🚶‍♂️ إرجاع الأفتار</button>
@@ -73,8 +66,8 @@
     <div id="right" class="control-btn">→</div>
 
     <a-scene light="defaultLightsEnabled: false" vr-mode-ui="enabled: false">
-        <a-entity light="type: ambient; color: #FFF; intensity: 3"></a-entity>
-        <a-entity light="type: directional; color: #FFF; intensity: 1.5" position="-1 2 1"></a-entity>
+        <a-entity light="type: ambient; color: #FFF; intensity: 2.5"></a-entity>
+        <a-entity light="type: directional; color: #FFF; intensity: 1.2" position="-1 4 2"></a-entity>
 
         <a-plane position="0 0 0" rotation="-90 0 0" width="20" height="20" color="#E0F7FA" src="https://images.unsplash.com/photo-1523821741446-edb2b68bb7a0?auto=format&fit=crop&w=500&q=80" repeat="10 10" material="shader: flat;"></a-plane> 
         
@@ -89,12 +82,32 @@
             <a-text value="OMAR SHOP 102" align="center" position="0 0 0.1" color="#D4AF37" width="10"></a-text>
         </a-box>
 
-        <!-- 🤖 الأفتار الأنيمي الخفيف المضاف داخل الغرفة المضيئة -->
-        <a-entity id="store-avatar" position="0 0.2 0" rotation="0 0 0">
-            <!-- أفتار أنيمي شفاف وخفيف يدعم كافة الهواتف بدون بطء -->
-            <a-image src="https://raw.githubusercontent.com/aframevr/aframe/master/examples/boilerplate/hello-world/cardboard.png" position="0 1.5 0" width="1.5" height="2.8" material="transparent: true; alphaTest: 0.5"></a-image>
-            <!-- قاعدة الأفتار -->
-            <a-cylinder position="0 0.05 0" radius="0.6" height="0.1" color="#38bdf8" material="opacity: 0.6; transparent: true"></a-cylinder>
+        <!-- 🤖 أفتار أنيمي ثلاثي الأبعاد مصمم بالكود ومضمن 100% بدون صور خارجية -->
+        <a-entity id="store-avatar" position="0 0 -2" rotation="0 0 0">
+            <!-- الرأس والوجه -->
+            <a-sphere position="0 1.6 0" radius="0.25" color="#FFDFC4"></a-sphere> <!-- الوجه -->
+            <a-cone position="0 1.82 0" radius-bottom="0.28" radius-top="0" height="0.25" color="#2b1704"></a-cone> <!-- الشعر الأنيمي -->
+            <a-sphere position="-0.08 1.65 0.22" radius="0.04" color="#0F172A"></a-sphere> <!-- العين اليسرى -->
+            <a-sphere position="0.08 1.65 0.22" radius="0.04" color="#0F172A"></a-sphere> <!-- العين اليمنى -->
+
+            <!-- الجذع والقميص -->
+            <a-cylinder position="0 1.1 0" radius="0.22" height="0.75" color="#0284C7"></a-cylinder>
+
+            <!-- الأذرع -->
+            <a-cylinder position="-0.28 1.15 0" radius="0.06" height="0.6" color="#0284C7" rotation="0 0 15"></a-cylinder> <!-- الذراع الأيسر -->
+            <a-sphere position="-0.36 0.82 0" radius="0.07" color="#FFDFC4"></a-sphere> <!-- اليد اليسرى -->
+            <a-cylinder position="0.28 1.15 0" radius="0.06" height="0.6" color="#0284C7" rotation="0 0 -15"></a-cylinder> <!-- الذراع الأيمن -->
+            <a-sphere position="0.36 0.82 0" radius="0.07" color="#FFDFC4"></a-sphere> <!-- اليد اليمنى -->
+
+            <!-- الأرجل والأحذية -->
+            <a-cylinder position="-0.11 0.4 0" radius="0.08" height="0.75" color="#1E293B"></a-cylinder> <!-- الرجل اليسرى -->
+            <a-box position="-0.11 0.04 0.05" width="0.16" height="0.08" depth="0.22" color="#000000"></a-box> <!-- الحذاء الأيسر -->
+            
+            <a-cylinder position="0.11 0.4 0" radius="0.08" height="0.75" color="#1E293B"></a-cylinder> <!-- الرجل اليمنى -->
+            <a-box position="0.11 0.04 0.05" width="0.16" height="0.08" depth="0.22" color="#000000"></a-box> <!-- الحذاء الأيمن -->
+
+            <!-- منصة الارتكاز المضيئة -->
+            <a-cylinder position="0 0.01 0" radius="0.5" height="0.02" color="#38BDF8" opacity="0.8"></a-cylinder>
         </a-entity>
 
         <a-entity id="product-display"></a-entity>
@@ -197,7 +210,7 @@
             avatar.setAttribute('rotation', rot);
         });
 
-        // نظام تحكم حركة الكاميرا
+        // نظام الحركة الدائري
         var rig = document.getElementById('rig'); var head = document.getElementById('head');
         var keys = {up: false, down: false, left: false, right: false};
         function setupBtn(id, k) {
