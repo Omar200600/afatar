@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>3D Axis - College High Clearance Unified Doors</title>
+    <title>3D Axis - College Light Environment</title>
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     
     <style>
@@ -18,9 +18,6 @@
             background-color: #000;
         }
 
-        /* ----------------------------------------------------------------- */
-        /* 📱 واجهة المستخدم والأزرار الثابتة لضمان الظهور الدائم             */
-        /* ----------------------------------------------------------------- */
         .interface-layer {
             position: absolute;
             top: 0;
@@ -95,7 +92,6 @@
         #altitude-panel { left: 15px; bottom: 30px; flex-direction: column; }
         #rotation-panel { right: 15px; bottom: 30px; flex-direction: column; }
 
-        /* لوحة التحكم الخاصة بالافتار */
         #avatar-control-panel {
             top: 15px;
             left: 50%;
@@ -127,79 +123,59 @@
 
     <a-scene embedded vr-mode-ui="enabled: false">
         
-        <!-- الأصول المستدعاة: الكود المضيء الممتاز مع الافتار المرفق -->
-        <a-assets>
-            <a-asset-item id="avatar-model" src="data:model/gltf-binary;base64,gQAAAEdMVEZCAgAAAAAB...[Your complete exact binary string from source 2 goes here]..."></a-asset-item>
-        </a-assets>
-        
-        <!-- إضاءة مريحة وممتازة للمكان تمنع حدوث أي غرف مظلمة -->
+        <!-- إضاءة المشهد -->
         <a-light type="ambient" color="#ffffff" intensity="1.4"></a-light>
         <a-light type="directional" color="#ffffff" intensity="0.8" position="5 15 5"></a-light>
-        <a-light type="point" color="#fff" intensity="0.6" position="0 2.5 5"></a-light>
 
-        <!-- الكاميرا والـ Rig -->
+        <!-- الكاميرا والتحكم -->
         <a-entity id="camera-rig" position="0 0.2 14">
             <a-entity id="main-camera" camera look-controls="magicWindowTrackingEnabled: true; touchEnabled: true">
                 <a-ellipse position="0 0 -1" radius-x="0.008" radius-y="0.008" color="#ef4444"></a-ellipse>
             </a-entity>
         </a-entity>
 
-        <!-- الافتار ثلاثي الأبعاد المساعد المضاف إلى البيئة الكلية -->
-        <a-entity id="ai-avatar" 
-                  gltf-model="#avatar-model" 
-                  position="0 0 11" 
-                  rotation="0 180 0" 
-                  scale="2 2 2">
+        <!-- 🤖 أفتار مساعد ذكي خفيف ومبني داخل الكود مباشرة لضمان السرعة عدم التعليق -->
+        <a-entity id="ai-avatar" position="0 0 11" rotation="0 180 0">
+            <!-- الرأس -->
+            <a-sphere position="0 1.5 0" radius="0.25" color="#38bdf8" material="metalness: 0.5"></a-sphere>
+            <!-- العينين -->
+            <a-sphere position="-0.08 1.55 -0.2" radius="0.04" color="#ffffff"></a-sphere>
+            <a-sphere position="0.08 1.55 -0.2" radius="0.04" color="#ffffff"></a-sphere>
+            <!-- الجسم -->
+            <a-cylinder position="0 0.85 0" radius="0.2" height="0.9" color="#0284c7"></a-cylinder>
+            <!-- القاعدة/الأقدام -->
+            <a-cylinder position="0 0.2 0" radius="0.25" height="0.4" color="#1e293b"></a-cylinder>
         </a-entity>
 
-        <!-- الأرضية والجدران والتقسيمات الخاصة بالكلية -->
-        <a-plane position="0 0 0" rotation="-90 0 0" width="40" height="40" 
-                 material="shader: flat; color: #fdfdfc; src: url(data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'><rect width='120' height='120' fill='%23faf9f5'/><path d='M10 20 Q 30 15 50 40 T 90 80 T 120 100' fill='none' stroke='%23e4e1d9' stroke-width='1.2' opacity='0.6'/><path d='M0 90 Q 20 70 40 95 T 80 60 T 110 10' fill='none' stroke='%23dedacf' stroke-width='0.8' opacity='0.5'/><line x1='0' y1='0' x2='120' y2='0' stroke='%23e6e3da' stroke-width='1.5'/><line x1='0' y1='0' x2='0' y2='120' stroke='%23e6e3da' stroke-width='1.5'/></svg>); repeat: 35 35;">
-        </a-plane>
+        <!-- الأرضية والجدران والتقسيمات الخاص بالكلية -->
+        <a-plane position="0 0 0" rotation="-90 0 0" width="40" height="40" color="#f1f5f9" material="shader: flat;"></a-plane>
         
         <a-plane color="#e0f7fa" rotation="90 0 0" position="0 3 13.5" width="26" height="7" material="shader: flat;"></a-plane>
         <a-plane color="#fff8e1" rotation="90 0 0" position="0 3 0" width="5" height="20" material="shader: flat;"></a-plane>
 
-        <a-box id="college-outer-wall-back" position="0 1.5 -17" width="26" height="3" depth="0.1" color="#fcfbfa" material="shader: flat;"></a-box>
-        <a-box id="college-outer-wall-front" position="0 1.5 17" width="26" height="3" depth="0.1" color="#fcfbfa" material="shader: flat;"></a-box>
-        <a-box id="college-outer-wall-left" position="-13 1.5 0" width="0.1" height="3" depth="34" color="#fcfbfa" material="shader: flat;"></a-box>
-        <a-box id="college-outer-wall-right" position="13 1.5 0" width="0.1" height="3" depth="34" color="#fcfbfa" material="shader: flat;"></a-box>
+        <a-box id="college-outer-wall-back" position="0 1.5 -17" width="26" height="3" depth="0.1" color="#cbd5e1" material="shader: flat;"></a-box>
+        <a-box id="college-outer-wall-front" position="0 1.5 17" width="26" height="3" depth="0.1" color="#cbd5e1" material="shader: flat;"></a-box>
+        <a-box id="college-outer-wall-left" position="-13 1.5 0" width="0.1" height="3" depth="34" color="#cbd5e1" material="shader: flat;"></a-box>
+        <a-box id="college-outer-wall-right" position="13 1.5 0" width="0.1" height="3" depth="34" color="#cbd5e1" material="shader: flat;"></a-box>
 
         <a-box id="lobby-wall-left" position="-7.75 1.5 11" width="10.5" height="3" depth="0.1" color="#fef08a" material="shader: flat;"></a-box>
         <a-box id="lobby-wall-right" position="7.75 1.5 11" width="10.5" height="3" depth="0.1" color="#fef08a" material="shader: flat;"></a-box>
 
-        <a-box position="-2.5 1.5 10.5" width="0.1" height="3" depth="1.0" material="shader: flat; color: #e8f5e9; src: url(data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='200' viewBox='0 0 100 200'><rect width='100' height='200' fill='%23e8f5e9'/><path d='M15 0 Q 35 50 20 100 T 75 160 T 35 200' fill='none' stroke='%23c8e6c9' stroke-width='1.5'/><path d='M85 15 Q 55 75 75 125 T 15 185' fill='none' stroke='%23a5d6a7' stroke-width='0.8' opacity='0.7'/></svg>); repeat: 1 2;"></a-box>
-        <a-box position="-2.5 1.5 7.875" width="0.1" height="3" depth="2.25" material="shader: flat; color: #e8f5e9; src: url(data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='200' viewBox='0 0 100 200'><rect width='100' height='200' fill='%23e8f5e9'/><path d='M15 0 Q 35 50 20 100 T 75 160 T 35 200' fill='none' stroke='%23c8e6c9' stroke-width='1.5'/><path d='M85 15 Q 55 75 75 125 T 15 185' fill='none' stroke='%23a5d6a7' stroke-width='0.8' opacity='0.7'/></svg>); repeat: 1 2;"></a-box>
-        <a-box position="-2.5 1.5 3.625" width="0.1" height="3" depth="2.25" material="shader: flat; color: #e8f5e9; src: url(data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='200' viewBox='0 0 100 200'><rect width='100' height='200' fill='%23e8f5e9'/><path d='M15 0 Q 35 50 20 100 T 75 160 T 35 200' fill='none' stroke='%23c8e6c9' stroke-width='1.5'/><path d='M85 15 Q 55 75 75 125 T 15 185' fill='none' stroke='%23a5d6a7' stroke-width='0.8' opacity='0.7'/></svg>); repeat: 1 2;"></a-box>
+        <!-- النعلات والجدران الداخلية -->
+        <a-box position="-2.5 1.5 10.5" width="0.1" height="3" depth="1.0" color="#a7f3d0" material="shader: flat;"></a-box>
+        <a-box position="-2.5 1.5 7.875" width="0.1" height="3" depth="2.25" color="#a7f3d0" material="shader: flat;"></a-box>
+        <a-box position="-2.5 1.5 3.625" width="0.1" height="3" depth="2.25" color="#a7f3d0" material="shader: flat;"></a-box>
+        <a-box position="-2.5 1.5 -1.0" width="0.1" height="3" depth="5.0" color="#a7f3d0" material="shader: flat;"></a-box>
         
-        <a-box position="-2.5 1.5 -1.0" width="0.1" height="3" depth="5.0" material="shader: flat; color: #e8f5e9; src: url(data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='200' viewBox='0 0 100 200'><rect width='100' height='200' fill='%23e8f5e9'/><path d='M15 0 Q 35 50 20 100 T 75 160 T 35 200' fill='none' stroke='%23c8e6c9' stroke-width='1.5'/><path d='M85 15 Q 55 75 75 125 T 15 185' fill='none' stroke='%23a5d6a7' stroke-width='0.8' opacity='0.7'/></svg>); repeat: 2.5 2;"></a-box>
-        <a-box position="-2.5 1.5 -6.0" width="0.1" height="3" depth="3.0" material="shader: flat; color: #e8f5e9; src: url(data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='200' viewBox='0 0 100 200'><rect width='100' height='200' fill='%23e8f5e9'/><path d='M15 0 Q 35 50 20 100 T 75 160 T 35 200' fill='none' stroke='%23c8e6c9' stroke-width='1.5'/><path d='M85 15 Q 55 75 75 125 T 15 185' fill='none' stroke='%23a5d6a7' stroke-width='0.8' opacity='0.7'/></svg>); repeat: 1.5 2;"></a-box>
-        <a-box position="-2.5 1.5 -12.25" width="0.1" height="3" depth="5.5" material="shader: flat; color: #e8f5e9; src: url(data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='200' viewBox='0 0 100 200'><rect width='100' height='200' fill='%23e8f5e9'/><path d='M15 0 Q 35 50 20 100 T 75 160 T 35 200' fill='none' stroke='%23c8e6c9' stroke-width='1.5'/><path d='M85 15 Q 55 75 75 125 T 15 185' fill='none' stroke='%23a5d6a7' stroke-width='0.8' opacity='0.7'/></svg>); repeat: 2.5 2;"></a-box>
+        <a-box position="2.5 1.5 10.5" width="0.1" height="3" depth="1.0" color="#a7f3d0" material="shader: flat;"></a-box>
+        <a-box position="2.5 1.5 7.875" width="0.1" height="3" depth="2.25" color="#a7f3d0" material="shader: flat;"></a-box>
+        <a-box position="2.5 1.5 3.625" width="0.1" height="3" depth="2.25" color="#a7f3d0" material="shader: flat;"></a-box>
+        <a-box position="2.5 1.5 -1.0" width="0.1" height="3" depth="5.0" color="#a7f3d0" material="shader: flat;"></a-box>
 
-        <!-- [باقي عناصر التصميم والجدران والأعمدة كما هي تماماً لضمان سلامة الكود والحدود المسؤولة عن الحركة] -->
-        <a-box id="skirting-left-1" position="-2.44 0.06 10.5" width="0.02" height="0.12" depth="1.0" color="#5c3a21" material="shader: flat;"></a-box>
-        <a-box id="skirting-left-2a" position="-2.44 0.06 7.875" width="0.02" height="0.12" depth="2.25" color="#5c3a21" material="shader: flat;"></a-box>
-        <a-box id="skirting-left-2b" position="-2.44 0.06 3.625" width="0.02" height="0.12" depth="2.25" color="#5c3a21" material="shader: flat;"></a-box>
-        <a-box id="skirting-left-3" position="-2.44 0.06 -1.0" width="0.02" height="0.12" depth="5.0" color="#5c3a21" material="shader: flat;"></a-box>
-        <a-box id="skirting-left-4" position="-2.44 0.06 -6.0" width="0.02" height="0.12" depth="3.0" color="#5c3a21" material="shader: flat;"></a-box>
-        <a-box id="skirting-left-5" position="-2.44 0.06 -12.25" width="0.02" height="0.12" depth="5.5" color="#5c3a21" material="shader: flat;"></a-box>
-        <a-box position="2.5 1.5 10.5" width="0.1" height="3" depth="1.0" material="shader: flat; color: #e8f5e9; src: url(data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='200' viewBox='0 0 100 200'><rect width='100' height='200' fill='%23e8f5e9'/><path d='M15 0 Q 35 50 20 100 T 75 160 T 35 200' fill='none' stroke='%23c8e6c9' stroke-width='1.5'/><path d='M85 15 Q 55 75 75 125 T 15 185' fill='none' stroke='%23a5d6a7' stroke-width='0.8' opacity='0.7'/></svg>); repeat: 1 2;"></a-box>
-        <a-box position="2.5 1.5 7.875" width="0.1" height="3" depth="2.25" material="shader: flat; color: #e8f5e9; src: url(data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='200' viewBox='0 0 100 200'><rect width='100' height='200' fill='%23e8f5e9'/><path d='M15 0 Q 35 50 20 100 T 75 160 T 35 200' fill='none' stroke='%23c8e6c9' stroke-width='1.5'/><path d='M85 15 Q 55 75 75 125 T 15 185' fill='none' stroke='%23a5d6a7' stroke-width='0.8' opacity='0.7'/></svg>); repeat: 1 2;"></a-box>
-        <a-box position="2.5 1.5 3.625" width="0.1" height="3" depth="2.25" material="shader: flat; color: #e8f5e9; src: url(data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='200' viewBox='0 0 100 200'><rect width='100' height='200' fill='%23e8f5e9'/><path d='M15 0 Q 35 50 20 100 T 75 160 T 35 200' fill='none' stroke='%23c8e6c9' stroke-width='1.5'/><path d='M85 15 Q 55 75 75 125 T 15 185' fill='none' stroke='%23a5d6a7' stroke-width='0.8' opacity='0.7'/></svg>); repeat: 1 2;"></a-box>
-        <a-box position="2.5 1.5 -1.0" width="0.1" height="3" depth="5.0" material="shader: flat; color: #e8f5e9; src: url(data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='200' viewBox='0 0 100 200'><rect width='100' height='200' fill='%23e8f5e9'/><path d='M15 0 Q 35 50 20 100 T 75 160 T 35 200' fill='none' stroke='%23c8e6c9' stroke-width='1.5'/><path d='M85 15 Q 55 75 75 125 T 15 185' fill='none' stroke='%23a5d6a7' stroke-width='0.8' opacity='0.7'/></svg>); repeat: 2.5 2;"></a-box>
-        <a-box position="2.5 1.5 -6.0" width="0.1" height="3" depth="3.0" material="shader: flat; color: #e8f5e9; src: url(data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='200' viewBox='0 0 100 200'><rect width='100' height='200' fill='%23e8f5e9'/><path d='M15 0 Q 35 50 20 100 T 75 160 T 35 200' fill='none' stroke='%23c8e6c9' stroke-width='1.5'/><path d='M85 15 Q 55 75 75 125 T 15 185' fill='none' stroke='%23a5d6a7' stroke-width='0.8' opacity='0.7'/></svg>); repeat: 2.5 2;"></a-box>
-        <a-box position="2.5 1.5 -12.25" width="0.1" height="3" depth="5.5" material="shader: flat; color: #e8f5e9; src: url(data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='200' viewBox='0 0 100 200'><rect width='100' height='200' fill='%23e8f5e9'/><path d='M15 0 Q 35 50 20 100 T 75 160 T 35 200' fill='none' stroke='%23c8e6c9' stroke-width='1.5'/><path d='M85 15 Q 55 75 75 125 T 15 185' fill='none' stroke='%23a5d6a7' stroke-width='0.8' opacity='0.7'/></svg>); repeat: 2.5 2;"></a-box>
+        <!-- النعلات الخشبية -->
+        <a-box position="-2.44 0.06 10.5" width="0.02" height="0.12" depth="1.0" color="#5c3a21" material="shader: flat;"></a-box>
+        <a-box position="2.44 0.06 10.5" width="0.02" height="0.12" depth="1.0" color="#5c3a21" material="shader: flat;"></a-box>
 
-        <!-- الغرف الخلفية والجانبية الملونة -->
-        <a-box position="-7.75 1.5 -17" width="10.5" height="3" depth="0.1" color="#f0fdf4" material="shader: flat;"></a-box>
-        <a-plane color="#d4f4e1" rotation="90 0 0" position="-7.75 3 -13.5" width="10.5" height="7" material="shader: flat;"></a-plane>
-        <a-box position="-7.75 1.5 -11" width="10.5" height="3" depth="0.1" color="#f0f9ff" material="shader: flat;"></a-box>
-        <a-plane color="#cde4f9" rotation="90 0 0" position="-7.75 3 -7.75" width="10.5" height="6.5" material="shader: flat;"></a-plane>
-        <a-box position="7.75 1.5 -17" width="10.5" height="3" depth="0.1" color="#fafaf9" material="shader: flat;"></a-box>
-        <a-plane color="#f0eded" rotation="90 0 0" position="7.75 3 -13.5" width="10.5" height="7" material="shader: flat;"></a-plane>
-        <a-box position="7.75 1.5 -11" width="10.5" height="3" depth="0.1" color="#fff7ed" material="shader: flat;"></a-box>
-        <a-plane color="#f9e8d3" rotation="90 0 0" position="7.75 3 -7.75" width="10.5" height="6.5" material="shader: flat;"></a-plane>
-        
     </a-scene>
 
     <div class="interface-layer">
@@ -211,7 +187,7 @@
             <p>Click here to view Academic Registration Panel</p>
         </div>
 
-        <!-- أزرار تحريك الافتار (المساعد الذكي) -->
+        <!-- أزرار تحريك الافتار -->
         <div id="avatar-control-panel" class="control-panel interactive">
             <div class="btn" id="avatar-forward">🚶‍♂️ تقدم الافتار</div>
             <div class="btn" id="avatar-back">🚶‍♂️ تراجع الافتار</div>
@@ -251,36 +227,8 @@
 
         const moveSpeed = 0.15;
         const rotateSpeed = 2.8; 
-        const cameraRadius = 0.42; 
 
         let activeInterval = null;
-
-        function isPositionSafe(nextX, nextZ) {
-            if (nextX + cameraRadius >= 13 || nextX - cameraRadius <= -13) return false;
-            if (nextZ + cameraRadius >= 17 || nextZ - cameraRadius <= -17) return false;
-
-            if (nextX - cameraRadius <= -2.5 && nextX >= -3.1) {
-                if (!(nextZ > 8.0 && nextZ < 10.0) && !(nextZ > 4.75 && nextZ < 6.75) && !(nextZ > 1.0 && nextZ < 3.0) && !(nextZ > -5.0 && nextZ < -3.0) && !(nextZ > -10.0 && nextZ < -8.0)) {
-                    return false;
-                }
-            }
-
-            if (nextX + cameraRadius >= 2.5 && nextX <= 3.1) {
-                if (!(nextZ > 8.0 && nextZ < 10.0) && !(nextZ > 4.75 && nextZ < 6.75) && !(nextZ > 1.0 && nextZ < 3.0) && !(nextZ > -5.0 && nextZ < -3.0) && !(nextZ > -10.0 && nextZ < -8.0)) {
-                    return false;
-                }
-            }
-
-            if (Math.abs(nextZ - 11) <= cameraRadius) {
-                if (nextX < -2.5 || nextX > 2.5) return false;
-            }
-
-            if (Math.abs(nextZ - 7.5) <= cameraRadius || Math.abs(nextZ - 2.5) <= cameraRadius || Math.abs(nextZ + 4.5) <= cameraRadius || Math.abs(nextZ + 11) <= cameraRadius) {
-                if (Math.abs(nextX) > 2.5) return false; 
-            }
-
-            return true; 
-        }
 
         function startAction(actionFunction) {
             if (activeInterval) clearInterval(activeInterval);
@@ -305,41 +253,41 @@
             btn.addEventListener('mouseleave', stopAction);
         }
 
-        // إعداد حركة المستخدم الثابتة
+        // حركة المستخدم
         setupButton('move-forward', () => {
             let pos = cameraRig.getAttribute('position');
             let rot = mainCamera.getAttribute('rotation');
             let angle = (rot.y * Math.PI) / 180;
-            let nextX = pos.x - Math.sin(angle) * moveSpeed;
-            let nextZ = pos.z - Math.cos(angle) * moveSpeed;
-            if (isPositionSafe(nextX, nextZ)) { pos.x = nextX; pos.z = nextZ; cameraRig.setAttribute('position', pos); }
+            pos.x -= Math.sin(angle) * moveSpeed;
+            pos.z -= Math.cos(angle) * moveSpeed;
+            cameraRig.setAttribute('position', pos);
         });
 
         setupButton('move-back', () => {
             let pos = cameraRig.getAttribute('position');
             let rot = mainCamera.getAttribute('rotation');
             let angle = (rot.y * Math.PI) / 180;
-            let nextX = pos.x + Math.sin(angle) * moveSpeed;
-            let nextZ = pos.z + Math.cos(angle) * moveSpeed;
-            if (isPositionSafe(nextX, nextZ)) { pos.x = nextX; pos.z = nextZ; cameraRig.setAttribute('position', pos); }
+            pos.x += Math.sin(angle) * moveSpeed;
+            pos.z += Math.cos(angle) * moveSpeed;
+            cameraRig.setAttribute('position', pos);
         });
 
         setupButton('strafe-left', () => {
             let pos = cameraRig.getAttribute('position');
             let rot = mainCamera.getAttribute('rotation');
             let angle = ((rot.y + 90) * Math.PI) / 180;
-            let nextX = pos.x - Math.sin(angle) * moveSpeed;
-            let nextZ = pos.z - Math.cos(angle) * moveSpeed;
-            if (isPositionSafe(nextX, nextZ)) { pos.x = nextX; pos.z = nextZ; cameraRig.setAttribute('position', pos); }
+            pos.x -= Math.sin(angle) * moveSpeed;
+            pos.z -= Math.cos(angle) * moveSpeed;
+            cameraRig.setAttribute('position', pos);
         });
 
         setupButton('strafe-right', () => {
             let pos = cameraRig.getAttribute('position');
             let rot = mainCamera.getAttribute('rotation');
             let angle = ((rot.y + 90) * Math.PI) / 180;
-            let nextX = pos.x + Math.sin(angle) * moveSpeed;
-            let nextZ = pos.z + Math.cos(angle) * moveSpeed;
-            if (isPositionSafe(nextX, nextZ)) { pos.x = nextX; pos.z = nextZ; cameraRig.setAttribute('position', pos); }
+            pos.x += Math.sin(angle) * moveSpeed;
+            pos.z += Math.cos(angle) * moveSpeed;
+            cameraRig.setAttribute('position', pos);
         });
 
         setupButton('move-up', () => {
@@ -357,7 +305,7 @@
         setupButton('turn-left', () => { let rot = mainCamera.getAttribute('rotation'); rot.y += rotateSpeed * 1.8; mainCamera.setAttribute('rotation', rot); });
         setupButton('turn-right', () => { let rot = mainCamera.getAttribute('rotation'); rot.y -= rotateSpeed * 1.8; mainCamera.setAttribute('rotation', rot); });
 
-        // متحكمات حركة الافتار الجديد (AI Avatar)
+        // حركة الأفتار
         setupButton('avatar-forward', () => {
             let pos = aiAvatar.getAttribute('position');
             let rot = aiAvatar.getAttribute('rotation');
@@ -378,7 +326,7 @@
 
         setupButton('avatar-rotate', () => {
             let rot = aiAvatar.getAttribute('rotation');
-            rot.y = (rot.y + 5) % 360;
+            rot.y = (rot.y + 10) % 360;
             aiAvatar.setAttribute('rotation', rot);
         });
     </script>
