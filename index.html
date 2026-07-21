@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>متجر عمر المضيء الصافي - أكسيس 3D</title>
+    <title>متجر عمر المضيء - أكسيس 3D</title>
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <style>
         .a-dialog, .a-dialog-container, .a-enter-vr, .a-enter-ar { display: none !important; visibility: hidden !important; pointer-events: none !important; }
@@ -82,32 +82,43 @@
             <a-text value="OMAR SHOP 102" align="center" position="0 0 0.1" color="#D4AF37" width="10"></a-text>
         </a-box>
 
-        <!-- 🤖 أفتار أنيمي ثلاثي الأبعاد مصمم بالكود ومضمن 100% بدون صور خارجية -->
+        <!-- 🤖 أفتار أنيمي معدل الاتجاهات والحركة -->
         <a-entity id="store-avatar" position="0 0 -2" rotation="0 0 0">
             <!-- الرأس والوجه -->
-            <a-sphere position="0 1.6 0" radius="0.25" color="#FFDFC4"></a-sphere> <!-- الوجه -->
-            <a-cone position="0 1.82 0" radius-bottom="0.28" radius-top="0" height="0.25" color="#2b1704"></a-cone> <!-- الشعر الأنيمي -->
-            <a-sphere position="-0.08 1.65 0.22" radius="0.04" color="#0F172A"></a-sphere> <!-- العين اليسرى -->
-            <a-sphere position="0.08 1.65 0.22" radius="0.04" color="#0F172A"></a-sphere> <!-- العين اليمنى -->
+            <a-sphere position="0 1.55 0" radius="0.22" color="#FFDFC4"></a-sphere>
+            <a-cone position="0 1.75 0" radius-bottom="0.25" radius-top="0" height="0.2" color="#2b1704"></a-cone>
+            <a-sphere position="-0.07 1.6 0.18" radius="0.035" color="#0F172A"></a-sphere>
+            <a-sphere position="0.07 1.6 0.18" radius="0.035" color="#0F172A"></a-sphere>
 
-            <!-- الجذع والقميص -->
-            <a-cylinder position="0 1.1 0" radius="0.22" height="0.75" color="#0284C7"></a-cylinder>
+            <!-- الجذع (القميص) -->
+            <a-cylinder position="0 1.05 0" radius="0.2" height="0.65" color="#0284C7"></a-cylinder>
 
-            <!-- الأذرع -->
-            <a-cylinder position="-0.28 1.15 0" radius="0.06" height="0.6" color="#0284C7" rotation="0 0 15"></a-cylinder> <!-- الذراع الأيسر -->
-            <a-sphere position="-0.36 0.82 0" radius="0.07" color="#FFDFC4"></a-sphere> <!-- اليد اليسرى -->
-            <a-cylinder position="0.28 1.15 0" radius="0.06" height="0.6" color="#0284C7" rotation="0 0 -15"></a-cylinder> <!-- الذراع الأيمن -->
-            <a-sphere position="0.36 0.82 0" radius="0.07" color="#FFDFC4"></a-sphere> <!-- اليد اليمنى -->
+            <!-- الذراع الأيسر -->
+            <a-entity id="arm-left" position="-0.25 1.25 0">
+                <a-cylinder position="0 -0.25 0" radius="0.05" height="0.5" color="#0284C7"></a-cylinder>
+                <a-sphere position="0 -0.52 0" radius="0.06" color="#FFDFC4"></a-sphere>
+            </a-entity>
 
-            <!-- الأرجل والأحذية -->
-            <a-cylinder position="-0.11 0.4 0" radius="0.08" height="0.75" color="#1E293B"></a-cylinder> <!-- الرجل اليسرى -->
-            <a-box position="-0.11 0.04 0.05" width="0.16" height="0.08" depth="0.22" color="#000000"></a-box> <!-- الحذاء الأيسر -->
-            
-            <a-cylinder position="0.11 0.4 0" radius="0.08" height="0.75" color="#1E293B"></a-cylinder> <!-- الرجل اليمنى -->
-            <a-box position="0.11 0.04 0.05" width="0.16" height="0.08" depth="0.22" color="#000000"></a-box> <!-- الحذاء الأيمن -->
+            <!-- الذراع الأيمن -->
+            <a-entity id="arm-right" position="0.25 1.25 0">
+                <a-cylinder position="0 -0.25 0" radius="0.05" height="0.5" color="#0284C7"></a-cylinder>
+                <a-sphere position="0 -0.52 0" radius="0.06" color="#FFDFC4"></a-sphere>
+            </a-entity>
+
+            <!-- الرجل اليسرى -->
+            <a-entity id="leg-left" position="-0.1 0.7 0">
+                <a-cylinder position="0 -0.3 0" radius="0.065" height="0.6" color="#1E293B"></a-cylinder>
+                <a-box position="0 -0.6 0.05" width="0.13" height="0.08" depth="0.2" color="#000000"></a-box>
+            </a-entity>
+
+            <!-- الرجل اليمنى -->
+            <a-entity id="leg-right" position="0.1 0.7 0">
+                <a-cylinder position="0 -0.3 0" radius="0.065" height="0.6" color="#1E293B"></a-cylinder>
+                <a-box position="0 -0.6 0.05" width="0.13" height="0.08" depth="0.2" color="#000000"></a-box>
+            </a-entity>
 
             <!-- منصة الارتكاز المضيئة -->
-            <a-cylinder position="0 0.01 0" radius="0.5" height="0.02" color="#38BDF8" opacity="0.8"></a-cylinder>
+            <a-cylinder position="0 0.01 0" radius="0.45" height="0.02" color="#38BDF8" opacity="0.8"></a-cylinder>
         </a-entity>
 
         <a-entity id="product-display"></a-entity>
@@ -123,24 +134,25 @@
         const listContainer = document.getElementById('list-container');
         const avatar = document.getElementById('store-avatar');
 
-        window.addEventListener('load', () => {
-            refreshStore();
-        });
+        const armLeft = document.getElementById('arm-left');
+        const armRight = document.getElementById('arm-right');
+        const legLeft = document.getElementById('leg-left');
+        const legRight = document.getElementById('leg-right');
 
-        function showNotification(message) {
-            const alertBox = document.getElementById('custom-alert');
-            alertBox.innerText = message;
-            alertBox.style.display = 'block';
-            setTimeout(() => { alertBox.style.display = 'none'; }, 2500);
+        let walkAngle = 0;
+        let isMoving = false;
+
+        window.addEventListener('load', () => { refreshStore(); });
+
+        function showNotification(msg) {
+            const b = document.getElementById('custom-alert');
+            b.innerText = msg; b.style.display = 'block';
+            setTimeout(() => { b.style.display = 'none'; }, 2500);
         }
 
         function refreshStore() {
-            display.innerHTML = '';
-            listContainer.innerHTML = '';
-            currentOffset = -7;
-            
+            display.innerHTML = ''; listContainer.innerHTML = ''; currentOffset = -7;
             const saved = JSON.parse(localStorage.getItem('omar_store_data')) || [];
-            
             saved.forEach((item, index) => {
                 const box = document.createElement('a-box');
                 box.setAttribute('position', `${currentOffset} 1.5 -9.5`);
@@ -151,10 +163,7 @@
 
                 const itemDiv = document.createElement('div');
                 itemDiv.className = 'product-item';
-                itemDiv.innerHTML = `
-                    <span>${item.name}</span>
-                    <button class="btn-delete" onclick="deleteItem(${index})">حذف</button>
-                `;
+                itemDiv.innerHTML = `<span>${item.name}</span><button class="btn-delete" onclick="deleteItem(${index})">حذف</button>`;
                 listContainer.appendChild(itemDiv);
             });
         }
@@ -167,17 +176,12 @@
             if (file && name && price) {
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    const imgData = e.target.result;
                     const saved = JSON.parse(localStorage.getItem('omar_store_data')) || [];
-                    saved.push({ img: imgData, name, price });
+                    saved.push({ img: e.target.result, name, price });
                     localStorage.setItem('omar_store_data', JSON.stringify(saved));
-                    
                     refreshStore();
                     showNotification("🚀 تم نشر وتأكيد حفظ المنتج!");
-                    
-                    document.getElementById('pName').value = '';
-                    document.getElementById('pPrice').value = '';
-                    document.getElementById('pImg').value = '';
+                    document.getElementById('pName').value = ''; document.getElementById('pPrice').value = ''; document.getElementById('pImg').value = '';
                 };
                 reader.readAsDataURL(file);
             } else { showNotification("⚠️ الرجاء إكمال جميع الحقول أولاً!"); }
@@ -191,26 +195,44 @@
             showNotification("🗑️ تم حذف المنتج بنجاح!");
         }
 
-        // أزرار التحكم بالأفتار
-        document.getElementById('av-fwd').addEventListener('click', () => {
-            let pos = avatar.getAttribute('position');
-            pos.z -= 0.3;
-            avatar.setAttribute('position', pos);
-        });
+        // محاكاة المشي للأفتار
+        function animateAvatar() {
+            if (isMoving) {
+                walkAngle += 0.15;
+                let rotArm = Math.sin(walkAngle) * 25;
+                let rotLeg = Math.sin(walkAngle) * 20;
 
-        document.getElementById('av-back').addEventListener('click', () => {
-            let pos = avatar.getAttribute('position');
-            pos.z += 0.3;
-            avatar.setAttribute('position', pos);
-        });
+                armLeft.setAttribute('rotation', `${rotArm} 0 0`);
+                armRight.setAttribute('rotation', `${-rotArm} 0 0`);
+                legLeft.setAttribute('rotation', `${-rotLeg} 0 0`);
+                legRight.setAttribute('rotation', `${rotLeg} 0 0`);
+            } else {
+                armLeft.setAttribute('rotation', '0 0 0');
+                armRight.setAttribute('rotation', '0 0 0');
+                legLeft.setAttribute('rotation', '0 0 0');
+                legRight.setAttribute('rotation', '0 0 0');
+            }
+        }
 
+        function moveAvatar(dz) {
+            let pos = avatar.getAttribute('position');
+            pos.z += dz;
+            avatar.setAttribute('position', pos);
+            isMoving = true;
+            setTimeout(() => { isMoving = false; }, 300);
+        }
+
+        document.getElementById('av-fwd').addEventListener('click', () => moveAvatar(-0.3));
+        document.getElementById('av-back').addEventListener('click', () => moveAvatar(0.3));
         document.getElementById('av-rot').addEventListener('click', () => {
             let rot = avatar.getAttribute('rotation');
             rot.y += 30;
             avatar.setAttribute('rotation', rot);
         });
 
-        // نظام الحركة الدائري
+        setInterval(animateAvatar, 30);
+
+        // التحكم بالكاميرا
         var rig = document.getElementById('rig'); var head = document.getElementById('head');
         var keys = {up: false, down: false, left: false, right: false};
         function setupBtn(id, k) {
@@ -225,9 +247,7 @@
         setInterval(() => {
             var pos = rig.getAttribute('position'); var rot = head.getAttribute('rotation');
             var ang = rot.y * Math.PI / 180; var s = 0.15;
-            
-            let nextX = pos.x;
-            let nextZ = pos.z;
+            let nextX = pos.x; let nextZ = pos.z;
 
             if(keys.up){ nextX -= Math.sin(ang)*s; nextZ -= Math.cos(ang)*s; }
             if(keys.down){ nextX += Math.sin(ang)*s; nextZ += Math.cos(ang)*s; }
@@ -235,8 +255,7 @@
             if(keys.right){ nextX += Math.cos(ang)*s; nextZ -= Math.sin(ang)*s; }
             
             if (nextX > -9.2 && nextX < 9.2 && nextZ > -9.2 && nextZ < 9.2) {
-                pos.x = nextX;
-                pos.z = nextZ;
+                pos.x = nextX; pos.z = nextZ;
             }
             rig.setAttribute('position', pos);
         }, 20);
