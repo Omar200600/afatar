@@ -1,77 +1,232 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>3D Axis - Real Human Avatar Test</title>
-    <!-- مكتبة A-Frame -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>متجر عمر المضيء الصافي - أكسيس 3D</title>
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
-    <!-- مكتبة تشغيل أنيميشن والحركات للمجسمات -->
-    <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.2.0/dist/aframe-extras.min.js"></script>
-    
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: sans-serif; background: #000; }
-        .interface-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
-        .interactive { pointer-events: auto; }
-        .control-panel { position: absolute; background: rgba(255, 255, 255, 0.9); border-radius: 15px; padding: 8px; display: flex; gap: 5px; }
-        .btn { background: #f4f4f5; border: 1px solid #ccc; border-radius: 8px; padding: 8px 12px; font-size: 0.9rem; cursor: pointer; }
-        .btn:active { background: #38bdf8; color: white; }
-        #avatar-panel { top: 10px; left: 50%; transform: translateX(-50%); }
-        #nav-panel { bottom: 15px; left: 50%; transform: translateX(-50%); flex-direction: column; align-items: center; }
+        /* إخفاء أي حوارات أو لوحات تلقائية خاصة بـ VR نهائياً */
+        .a-dialog, .a-dialog-container, .a-enter-vr, .a-enter-ar { display: none !important; visibility: hidden !important; pointer-events: none !important; }
+
+        /* لوحات التحكم الرئيسية */
+        #nav-panel { position: fixed; top: 10px; right: 10px; z-index: 9999; background: white; border: 2px solid #D4AF37; padding: 10px; border-radius: 10px; width: 140px; }
+        #management-ui { position: fixed; top: 10px; left: 10px; background: white; padding: 10px; border: 2px solid #28a745; border-radius: 10px; z-index: 9999; width: 185px; }
+        
+        /* شريط إدارة وحذف المنتجات الأفقي الأنيق الموفر للمساحة */
+        #products-list-ui { position: fixed; top: 175px; left: 10px; background: rgba(255, 255, 255, 0.95); padding: 8px; border: 2px solid #D4AF37; border-radius: 10px; z-index: 9999; width: 185px; font-family: sans-serif; font-size: 12px; }
+        #list-container { display: flex; flex-direction: row; gap: 8px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: thin; }
+        
+        .product-item { flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; background: #f9f9f9; border: 1px solid #ddd; padding: 4px; border-radius: 6px; width: 55px; text-align: center; }
+        .product-item span { max-width: 50px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 3px; font-weight: bold; }
+        .btn-delete { background: #ff4d4d; color: white; border: none; padding: 2px 5px; border-radius: 4px; cursor: pointer; font-size: 10px; font-weight: bold; width: 100%; }
+        
+        /* لوحة التحكم الخاصة بالأفتار */
+        #avatar-ui { position: fixed; top: 10px; left: 50%; transform: translateX(-50%); background: rgba(0, 0, 0, 0.8); padding: 8px 12px; border: 2px solid #38bdf8; border-radius: 12px; z-index: 9999; display: flex; gap: 6px; }
+        .avatar-btn { background: #0284c7; color: white; border: none; padding: 6px 10px; border-radius: 6px; font-weight: bold; font-size: 11px; cursor: pointer; }
+        .avatar-btn:active { background: #38bdf8; }
+
+        /* نافذة الإشعارات الذكية البديلة لنوافذ المتصفح */
+        #custom-alert { display: none; position: fixed; bottom: 20px; right: 20px; background: #333; color: #fff; padding: 12px 25px; border-radius: 5px; z-index: 10000; font-weight: bold; }
+
+        .btn-action { width: 100%; padding: 8px; margin-top: 5px; border-radius: 5px; border: none; cursor: pointer; font-weight: bold; color: white; }
+        input { width: 90%; margin: 4px 0; padding: 5px; }
+
+        /* أزرار الحركة الدائرية الفخمة */
+        .control-btn { position: fixed; width: 55px; height: 55px; background: rgba(212, 175, 55, 1); border: 2px solid white; border-radius: 50%; z-index: 9999; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; touch-action: none; font-size: 20px; }
+        #up { bottom: 120px; left: 80px; } 
+        #down { bottom: 20px; left: 80px; } 
+        #left { bottom: 70px; left: 20px; } 
+        #right { bottom: 70px; left: 140px; }
     </style>
 </head>
 <body>
 
-    <a-scene embedded vr-mode-ui="enabled: false">
-        <a-light type="ambient" color="#ffffff" intensity="1.5"></a-light>
-        <a-light type="directional" color="#ffffff" intensity="1.0" position="5 10 5"></a-light>
-
-        <!-- الكاميرا -->
-        <a-entity id="camera-rig" position="0 0 5">
-            <a-entity id="main-camera" camera look-controls="magicWindowTrackingEnabled: true; touchEnabled: true"></a-entity>
-        </a-entity>
-
-        <!-- 👤 أفتار بشري حقيقي متحرك جاهز خفيف للغاية (GLB) -->
-        <a-entity id="real-avatar" 
-                  gltf-model="https://models.readyplayer.me/6460d37574a3827772873a20.glb" 
-                  position="0 0 0" 
-                  rotation="0 0 0" 
-                  scale="1 1 1"
-                  animation-mixer>
-        </a-entity>
-
-        <!-- الأرضية -->
-        <a-plane position="0 0 0" rotation="-90 0 0" width="20" height="20" color="#e2e8f0"></a-plane>
-    </a-scene>
-
-    <div class="interface-layer">
-        <!-- تحريك الأفتار الحقيقي -->
-        <div id="avatar-panel" class="control-panel interactive">
-            <button class="btn" id="av-fwd">🚶‍♂️ تقديم الأفتار</button>
-            <button class="btn" id="av-back">🚶‍♂️ إرجاع الأفتار</button>
-            <button class="btn" id="av-rot">🔄 تدوير</button>
-        </div>
+    <div id="nav-panel">
+        <button class="btn-action" style="background:#8B4513;" onclick="window.location.href='corridor.html'">🏃 العودة للممر</button>
     </div>
 
-    <script>
-        const avatar = document.getElementById('real-avatar');
+    <!-- لوحة التحكم الحركي الخاصة بالأفتار -->
+    <div id="avatar-ui">
+        <button class="avatar-btn" id="av-fwd">🚶‍♂️ تقديم الأفتار</button>
+        <button class="avatar-btn" id="av-back">🚶‍♂️ إرجاع الأفتار</button>
+        <button class="avatar-btn" id="av-rot">🔄 تدوير</button>
+    </div>
+
+    <div id="management-ui">
+        <input type="file" id="pImg" accept="image/*">
+        <input type="text" id="pName" placeholder="اسم المنتج">
+        <input type="number" id="pPrice" placeholder="السعر">
+        <button class="btn-action" style="background:#28a745;" onclick="addItem()">نشر المنتج 🚀</button>
+    </div>
+
+    <div id="products-list-ui">
+        <strong style="color: #333; display:block; margin-bottom: 5px; font-size: 11px;">📦 منتجات المتجر الحالية (اسحب لليسار):</strong>
+        <div id="list-container"></div>
+    </div>
+
+    <div id="custom-alert"></div>
+
+    <div id="up" class="control-btn">↑</div>
+    <div id="down" class="control-btn">↓</div>
+    <div id="left" class="control-btn">←</div>
+    <div id="right" class="control-btn">→</div>
+
+    <a-scene light="defaultLightsEnabled: false" vr-mode-ui="enabled: false">
+        <a-entity light="type: ambient; color: #FFF; intensity: 3"></a-entity>
+        <a-entity light="type: directional; color: #FFF; intensity: 1.5" position="-1 2 1"></a-entity>
+
+        <a-plane position="0 0 0" rotation="-90 0 0" width="20" height="20" color="#E0F7FA" src="https://images.unsplash.com/photo-1523821741446-edb2b68bb7a0?auto=format&fit=crop&w=500&q=80" repeat="10 10" material="shader: flat;"></a-plane> 
         
-        function moveAvatar(dx, dz) {
+        <a-box position="0 4 -10" width="20" height="8" depth="0.2" color="#FFFDD0" src="https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&w=500&q=80" repeat="1 1" material="shader: flat;"></a-box> 
+        <a-box position="0 4 10" width="20" height="8" depth="0.2" color="#FFFDD0" src="https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&w=500&q=80" repeat="1 1" material="shader: flat;"></a-box> 
+        <a-box position="-10 4 0" width="0.2" height="8" depth="20" color="#F5F5DC" src="https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&w=500&q=80" repeat="1 1" material="shader: flat;"></a-box> 
+        <a-box position="10 4 0" width="0.2" height="8" depth="20" color="#F5F5DC" src="https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&w=500&q=80" repeat="1 1" material="shader: flat;"></a-box> 
+        
+        <a-box position="0 8 0" width="20" height="0.1" depth="20" color="#FFFFFF" material="shader: flat;"></a-box> 
+        
+        <a-box position="0 6 -9.8" width="6" height="1.2" depth="0.1" color="#8B4513">
+            <a-text value="OMAR SHOP 102" align="center" position="0 0 0.1" color="#D4AF37" width="10"></a-text>
+        </a-box>
+
+        <!-- 🤖 الأفتار الأنيمي الخفيف المضاف داخل الغرفة المضيئة -->
+        <a-entity id="store-avatar" position="0 0.2 0" rotation="0 0 0">
+            <!-- أفتار أنيمي شفاف وخفيف يدعم كافة الهواتف بدون بطء -->
+            <a-image src="https://raw.githubusercontent.com/aframevr/aframe/master/examples/boilerplate/hello-world/cardboard.png" position="0 1.5 0" width="1.5" height="2.8" material="transparent: true; alphaTest: 0.5"></a-image>
+            <!-- قاعدة الأفتار -->
+            <a-cylinder position="0 0.05 0" radius="0.6" height="0.1" color="#38bdf8" material="opacity: 0.6; transparent: true"></a-cylinder>
+        </a-entity>
+
+        <a-entity id="product-display"></a-entity>
+
+        <a-entity id="rig" position="0 1.6 5">
+            <a-entity id="head" camera look-controls></a-entity>
+        </a-entity>
+    </a-scene>
+
+    <script>
+        let currentOffset = -7;
+        const display = document.getElementById('product-display');
+        const listContainer = document.getElementById('list-container');
+        const avatar = document.getElementById('store-avatar');
+
+        window.addEventListener('load', () => {
+            refreshStore();
+        });
+
+        function showNotification(message) {
+            const alertBox = document.getElementById('custom-alert');
+            alertBox.innerText = message;
+            alertBox.style.display = 'block';
+            setTimeout(() => { alertBox.style.display = 'none'; }, 2500);
+        }
+
+        function refreshStore() {
+            display.innerHTML = '';
+            listContainer.innerHTML = '';
+            currentOffset = -7;
+            
+            const saved = JSON.parse(localStorage.getItem('omar_store_data')) || [];
+            
+            saved.forEach((item, index) => {
+                const box = document.createElement('a-box');
+                box.setAttribute('position', `${currentOffset} 1.5 -9.5`);
+                box.setAttribute('width', '2.5'); box.setAttribute('height', '2.5'); box.setAttribute('depth', '0.2');
+                box.setAttribute('material', {src: item.img, shader: 'flat'});
+                display.appendChild(box);
+                currentOffset += 3.5;
+
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'product-item';
+                itemDiv.innerHTML = `
+                    <span>${item.name}</span>
+                    <button class="btn-delete" onclick="deleteItem(${index})">حذف</button>
+                `;
+                listContainer.appendChild(itemDiv);
+            });
+        }
+
+        function addItem() {
+            const file = document.getElementById('pImg').files[0];
+            const name = document.getElementById('pName').value;
+            const price = document.getElementById('pPrice').value;
+
+            if (file && name && price) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const imgData = e.target.result;
+                    const saved = JSON.parse(localStorage.getItem('omar_store_data')) || [];
+                    saved.push({ img: imgData, name, price });
+                    localStorage.setItem('omar_store_data', JSON.stringify(saved));
+                    
+                    refreshStore();
+                    showNotification("🚀 تم نشر وتأكيد حفظ المنتج!");
+                    
+                    document.getElementById('pName').value = '';
+                    document.getElementById('pPrice').value = '';
+                    document.getElementById('pImg').value = '';
+                };
+                reader.readAsDataURL(file);
+            } else { showNotification("⚠️ الرجاء إكمال جميع الحقول أولاً!"); }
+        }
+
+        function deleteItem(index) {
+            let s = JSON.parse(localStorage.getItem('omar_store_data')) || [];
+            s.splice(index, 1);
+            localStorage.setItem('omar_store_data', JSON.stringify(s));
+            refreshStore();
+            showNotification("🗑️ تم حذف المنتج بنجاح!");
+        }
+
+        // أزرار التحكم بالأفتار
+        document.getElementById('av-fwd').addEventListener('click', () => {
             let pos = avatar.getAttribute('position');
-            pos.x += dx;
-            pos.z += dz;
+            pos.z -= 0.3;
             avatar.setAttribute('position', pos);
-        }
+        });
 
-        function rotateAvatar(angle) {
+        document.getElementById('av-back').addEventListener('click', () => {
+            let pos = avatar.getAttribute('position');
+            pos.z += 0.3;
+            avatar.setAttribute('position', pos);
+        });
+
+        document.getElementById('av-rot').addEventListener('click', () => {
             let rot = avatar.getAttribute('rotation');
-            rot.y += angle;
+            rot.y += 30;
             avatar.setAttribute('rotation', rot);
-        }
+        });
 
-        document.getElementById('av-fwd').addEventListener('click', () => moveAvatar(0, -0.2));
-        document.getElementById('av-back').addEventListener('click', () => moveAvatar(0, 0.2));
-        document.getElementById('av-rot').addEventListener('click', () => rotateAvatar(15));
+        // نظام تحكم حركة الكاميرا
+        var rig = document.getElementById('rig'); var head = document.getElementById('head');
+        var keys = {up: false, down: false, left: false, right: false};
+        function setupBtn(id, k) {
+            var b = document.getElementById(id);
+            b.addEventListener('touchstart', (e)=>{e.preventDefault(); keys[k]=true;});
+            b.addEventListener('touchend', (e)=>{e.preventDefault(); keys[k]=false;});
+            b.addEventListener('mousedown', ()=>{keys[k]=true;});
+            b.addEventListener('mouseup', ()=>{keys[k]=false;});
+        }
+        setupBtn('up','up'); setupBtn('down','down'); setupBtn('left','left'); setupBtn('right','right');
+
+        setInterval(() => {
+            var pos = rig.getAttribute('position'); var rot = head.getAttribute('rotation');
+            var ang = rot.y * Math.PI / 180; var s = 0.15;
+            
+            let nextX = pos.x;
+            let nextZ = pos.z;
+
+            if(keys.up){ nextX -= Math.sin(ang)*s; nextZ -= Math.cos(ang)*s; }
+            if(keys.down){ nextX += Math.sin(ang)*s; nextZ += Math.cos(ang)*s; }
+            if(keys.left){ nextX -= Math.cos(ang)*s; nextZ += Math.sin(ang)*s; }
+            if(keys.right){ nextX += Math.cos(ang)*s; nextZ -= Math.sin(ang)*s; }
+            
+            if (nextX > -9.2 && nextX < 9.2 && nextZ > -9.2 && nextZ < 9.2) {
+                pos.x = nextX;
+                pos.z = nextZ;
+            }
+            rig.setAttribute('position', pos);
+        }, 20);
     </script>
 </body>
 </html>
